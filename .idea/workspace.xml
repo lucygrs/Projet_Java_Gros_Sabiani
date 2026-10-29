@@ -4,7 +4,30 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5d4d2069-84fe-43dc-9f5f-c7b177d8855a" name="Changes" comment="Dev Full Stack Java - 2026-27&#10;Corrigé TP 3-4" />
+    <list default="true" id="5d4d2069-84fe-43dc-9f5f-c7b177d8855a" name="Changes" comment="Dev Full Stack Java - 2026-27&#10;Corrigé TP 3-4">
+      <change afterPath="$PROJECT_DIR$/src/main/java/altn72/tpfilrouge/modele/Equipement.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/altn72/tpfilrouge/modele/Evaluation.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/altn72/tpfilrouge/modele/Incident.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/altn72/tpfilrouge/modele/Ligne.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/altn72/tpfilrouge/modele/LigneStation.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/altn72/tpfilrouge/modele/Prestataire.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/altn72/tpfilrouge/modele/Station.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/altn72/tpfilrouge/modele/StationUtilisateur.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/altn72/tpfilrouge/modele/Utilisateur.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/23a49601-4d8f-4857-8251-e6b25e3001b3.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/23a49601-4d8f-4857-8251-e6b25e3001b3.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/data_sources_history.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/data_sources_history.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/altn72/tpfilrouge/controleur/ProgrammeurControleur.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/altn72/tpfilrouge/modele/Programmeur.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/altn72/tpfilrouge/modele/ProgrammeurRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/altn72/tpfilrouge/service/ProgrammeurService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/altn72/tpfilrouge/controleur/ProgrammeurControleur.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/altn72/tpfilrouge/modele/Programmeur.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/altn72/tpfilrouge/modele/ProgrammeurRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/altn72/tpfilrouge/service/ProgrammeurService.class" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -26,6 +49,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;taonix&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/lucygrs/Projet_Java_Gros_Sabiani.git&quot;,
+    &quot;accountId&quot;: &quot;8c734699-739e-4cc6-810a-c12fc8339f44&quot;
+  }
+}</component>
   <component name="HttpClientOnboardingState">{
   &quot;isOnboardingCommentShown&quot;: true
 }</component>
@@ -36,6 +71,65 @@
       </MavenGeneralSettings>
     </option>
   </component>
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.0" />
+      <entry key="MS500" value="1.0" />
+      <entry key="S2" value="1.0000389639644571" />
+      <entry key="S5" value="1.0172292056729517" />
+      <entry key="S10" value="1.1312600688440768" />
+      <entry key="S30" value="1.5082111735500572" />
+      <entry key="S60" value="1.7128896162878293" />
+      <entry key="M2" value="1.8448778326990156" />
+      <entry key="M5" value="1.9842336194638155" />
+      <entry key="M10" value="2.1896125102110418" />
+      <entry key="M15" value="2.34530517077972" />
+      <entry key="M30" value="2.595094629815631" />
+      <entry key="H1" value="2.7730359145577363" />
+      <entry key="H2" value="2.8796011612949117" />
+      <entry key="H4" value="2.9379616356492075" />
+      <entry key="D1" value="2.989394979323211" />
+      <entry key="W1" value="2.998478367155895" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="0.0" />
+      <entry key="S10" value="0.0" />
+      <entry key="S30" value="0.0" />
+      <entry key="S60" value="0.0" />
+      <entry key="M2" value="0.0" />
+      <entry key="M5" value="0.0" />
+      <entry key="M10" value="0.0" />
+      <entry key="M15" value="0.0" />
+      <entry key="M30" value="0.0" />
+      <entry key="H1" value="0.0" />
+      <entry key="H2" value="0.0" />
+      <entry key="H4" value="0.0" />
+      <entry key="D1" value="0.0" />
+      <entry key="W1" value="0.0" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="0.6643429070482558" />
+      <entry key="MS500" value="0.921464186198704" />
+      <entry key="S2" value="0.9797969805537396" />
+      <entry key="S5" value="1.0087639814700788" />
+      <entry key="S10" value="1.1259563158469186" />
+      <entry key="S30" value="1.5052661893452226" />
+      <entry key="S60" value="1.7110973108159009" />
+      <entry key="M2" value="1.8438782557942301" />
+      <entry key="M5" value="1.9837807213120433" />
+      <entry key="M10" value="2.1893372129260125" />
+      <entry key="M15" value="2.3450960861483168" />
+      <entry key="M30" value="2.594969378789422" />
+      <entry key="H1" value="2.77296587556685" />
+      <entry key="H2" value="2.879563917520578" />
+      <entry key="H4" value="2.9379424041671416" />
+      <entry key="D1" value="2.989391684491711" />
+      <entry key="W1" value="2.9984778942049526" />
+    </decayedShown>
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 1,
   &quot;fromUser&quot;: false
@@ -45,41 +139,49 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "HTTP Request.generated-requests | #10.executor": "Run",
-    "HTTP Request.generated-requests | #11.executor": "Run",
-    "HTTP Request.generated-requests | #14.executor": "Run",
-    "HTTP Request.generated-requests | #7.executor": "Run",
-    "HTTP Request.generated-requests | #8.executor": "Run",
-    "HTTP Request.generated-requests | #9.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "Spring Boot.TpFilRougeApplication.executor": "Run",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "P:/MES COURS/Developpement Full Stack avec Java/ALTN72 - 2026_2027/DEV_CODE/GitHub/TpFilRouge_CORRIGE_5",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "reference.settings.project.maven.repository.indices"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;HTTP Request.generated-requests | #10.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.generated-requests | #11.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.generated-requests | #14.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.generated-requests | #7.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.generated-requests | #8.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.generated-requests | #9.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;Spring Boot.TpFilRougeApplication.executor&quot;: &quot;Run&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;P:/MES COURS/Developpement Full Stack avec Java/ALTN72 - 2026_2027/DEV_CODE/GitHub/TpFilRouge_CORRIGE_5&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "mysql",
-      "mariadb"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mysql&quot;,
+      &quot;mariadb&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RunAnythingCache">
     <option name="myCommands">
       <command value="TpFilRougeApplication" />
@@ -139,6 +241,7 @@
     <attachedChunks>
       <set>
         <option value="bundled-jdk-30f59d01ecdd-a203e0a19954-intellij.indexing.shared.core-IU-262.10968.63" />
+        <option value="bundled-js-predefined-d6986cc7102b-4abd2a77f808-JavaScript-IU-262.10968.63" />
       </set>
     </attachedChunks>
   </component>
@@ -159,5 +262,9 @@
     <MESSAGE value="Dev Full Stack Java / 2026-27&#10;Corrigé TP 1-2" />
     <MESSAGE value="Dev Full Stack Java - 2026-27&#10;Corrigé TP 3-4" />
     <option name="LAST_COMMIT_MESSAGE" value="Dev Full Stack Java - 2026-27&#10;Corrigé TP 3-4" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>
