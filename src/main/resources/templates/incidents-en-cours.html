@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/gabarit :: entete('Fiches Incident')}"></head>
+<body class="bg-fond font-sans text-texte">
+<div class="flex min-h-screen gap-11 px-10 py-4">
+    <aside th:replace="~{fragments/gabarit :: menu('incidents')}"></aside>
+    <main class="min-w-0 flex-1">
+        <div class="mb-3.5 flex items-center justify-between gap-4">
+            <h1 class="text-[28px] font-medium">Fiches Incident</h1>
+            <div class="flex items-center gap-3">
+                <button class="bouton-principal" type="button" th:data-popup="@{/incidents/nouveau}">
+                    <i class="bi bi-plus-lg"></i>Ajouter
+                </button>
+                <form th:replace="~{fragments/gabarit :: recherche}"></form>
+            </div>
+        </div>
+
+        <nav class="mb-3.5 flex">
+            <a class="onglet bg-vert text-white" th:href="@{/incidents}">En cours</a>
+            <a class="onglet" th:if="${estResponsable}" th:href="@{/incidents/passes}">Passés</a>
+        </nav>
+
+        <div class="overflow-hidden rounded-xl bg-surface-claire">
+            <table class="tableau-donnees">
+                <thead>
+                <tr>
+                    <th>N°</th>
+                    <th>Nom</th>
+                    <th>Prestataire de résolution</th>
+                    <th>Equipement</th>
+                    <th>Emplacement</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(incidents)}">
+                    <td class="py-7 text-center text-secondaire" colspan="6">Aucun incident en cours</td>
+                </tr>
+                <tr th:each="suivi : ${incidents}" th:with="incident=${suivi.incident()}">
+                    <td class="text-secondaire" th:text="|#${incident.id}|">#1</td>
+                    <td>
+                        <span class="inline-block rounded-[3px] bg-vert-clair px-2 text-[11px] font-semibold"
+                              th:text="${#temporals.format(incident.dateOuverture, 'd MMMM')}">1 janvier</span>
+                        <a class="flex cursor-pointer items-center gap-2 font-medium"
+                           th:data-popup="@{/incidents/{id}(id=${incident.id})}">
+                            <span th:replace="~{fragments/gabarit :: pastille(${suivi.niveauAttention()})}"></span>
+                            <span th:text="${incident.titre}">Titre</span>
+                        </a>
+                        <span class="block text-[15px] leading-tight text-secondaire"
+                              th:text="${incident.description}">Description</span>
+                    </td>
+                    <td>
+                        <a class="encart cursor-pointer" th:if="${incident.prestataire != null and estResponsable}"
+                           th:data-popup="@{/incidents/{id}/affectation(id=${incident.id})}">
+                            <span><strong class="block font-medium" th:text="${incident.prestataire.nom}">Prestataire</strong>
+                                <small class="text-[15px] text-secondaire" th:text="${incident.prestataire.contact}">Contact</small></span>
+                            <i class="bi bi-box-arrow-up-right"></i>
+                        </a>
+                        <span class="encart" th:if="${incident.prestataire != null and !estResponsable}">
+                            <span><strong class="block font-medium" th:text="${incident.prestataire.nom}">Prestataire</strong>
+                                <small class="text-[15px] text-secondaire" th:text="${incident.prestataire.contact}">Contact</small></span>
+                        </span>
+                        <button class="flex w-[230px] cursor-pointer flex-col items-center justify-center rounded border border-dashed border-secondaire bg-transparent p-1.5 text-secondaire"
+                                type="button" th:if="${incident.prestataire == null and estResponsable}"
+                                th:data-popup="@{/incidents/{id}/affectation(id=${incident.id})}">
+                            <i class="bi bi-plus-lg"></i>Ajouter
+                        </button>
+                        <span class="text-secondaire" th:if="${incident.prestataire == null and !estResponsable}">Aucun</span>
+                    </td>
+                    <td>
+                        <a class="encart cursor-pointer"
+                           th:data-popup="@{/equipements/{id}/fiche(id=${incident.equipement.id})}">
+                            <span><strong class="block font-medium" th:text="${incident.equipement.nom}">Equipement</strong>
+                                <small class="text-[15px] text-secondaire" th:text="|#${incident.equipement.reference}|">#00000</small></span>
+                            <i class="bi bi-box-arrow-up-right"></i>
+                        </a>
+                    </td>
+                    <td th:insert="~{fragments/gabarit :: emplacement(${incident.equipement.station})}"></td>
+                    <td>
+                        <div class="flex flex-wrap justify-end gap-2.5">
+                            <button class="bouton-secondaire" type="button" th:disabled="${!incident.aUnPrestataire()}"
+                                    th:title="${incident.aUnPrestataire()} ? 'Résoudre l’incident' : 'Affectez d’abord un prestataire'"
+                                    th:data-popup="@{/incidents/{id}/resolution(id=${incident.id})}">
+                                <i class="bi bi-archive"></i>Résoudre
+                            </button>
+                            <button class="bouton-secondaire" type="button" th:if="${estResponsable}"
+                                    th:data-popup="@{/incidents/{id}/modification(id=${incident.id})}">
+                                <i class="bi bi-pencil"></i>Modifier
+                            </button>
+                            <button class="bouton-secondaire" type="button" th:if="${estResponsable}"
+                                    th:data-suppression="@{/incidents/{id}(id=${incident.id})}"
+                                    th:data-confirmation="|Supprimer l’incident « ${incident.titre} » ?|">
+                                <i class="bi bi-trash"></i>Supprimer
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div th:replace="~{fragments/gabarit :: pagination}"></div>
+        </div>
+    </main>
+</div>
+<div th:replace="~{fragments/gabarit :: popup}"></div>
+</body>
+</html>

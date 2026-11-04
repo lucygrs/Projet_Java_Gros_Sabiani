@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/gabarit :: styles}"></th:block>
+    <title>Erreur · IDFLM</title>
+</head>
+<body class="bg-fond font-sans text-texte">
+<main class="flex min-h-screen flex-col items-center justify-center gap-3.5 text-center">
+    <img th:src="@{/images/logo.svg}" alt="IDFLM" width="90">
+    <span class="text-6xl font-semibold text-vert-fonce" th:text="${status}">404</span>
+    <p th:text="${message != null and !#strings.isEmpty(message)} ? ${message} : 'Une erreur est survenue'">
+        Une erreur est survenue
+    </p>
+    <a class="bouton-principal" th:href="@{/}">Retour à l'accueil</a>
+</main>
+</body>
+</html>

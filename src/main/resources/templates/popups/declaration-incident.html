@@ -1,0 +1,28 @@
+<div xmlns:th="http://www.thymeleaf.org" th:remove="tag">
+    <th:block th:replace="~{fragments/gabarit :: entetePopup('Déclarer un incident')}"></th:block>
+    <form th:action="@{/incidents}" method="post" data-formulaire-popup>
+        <div class="mb-4">
+            <label class="libelle" for="idEquipement">Equipement concerné</label>
+            <select class="champ-saisie" id="idEquipement" name="idEquipement"
+                    data-recherche="Rechercher un équipement ou un arrêt">
+                <option value="">Choisir un équipement</option>
+                <option th:each="equipement : ${equipements}" th:value="${equipement.id}"
+                        th:selected="${equipement.id == formulaire.idEquipement()}"
+                        th:text="|${equipement.nom} · ${equipement.station.nom} (#${equipement.reference})|">Equipement</option>
+            </select>
+        </div>
+        <div class="mb-4">
+            <label class="libelle" for="titre">Titre</label>
+            <input class="champ-saisie" id="titre" name="titre" maxlength="100" required th:value="${formulaire.titre()}">
+        </div>
+        <div class="mb-4">
+            <label class="libelle" for="description">Description</label>
+            <textarea class="champ-saisie min-h-[90px] resize-y" id="description" name="description" maxlength="500"
+                      th:text="${formulaire.description()}"></textarea>
+        </div>
+        <div class="mt-2.5 flex justify-end gap-2.5">
+            <button class="bouton-secondaire" type="button" data-fermer-popup>Annuler</button>
+            <button class="bouton-principal" type="submit">Déclarer</button>
+        </div>
+    </form>
+</div>

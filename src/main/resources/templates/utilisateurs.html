@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/gabarit :: entete('Gestion Hummaine')}"></head>
+<body class="bg-fond font-sans text-texte">
+<div class="flex min-h-screen gap-11 px-10 py-4">
+    <aside th:replace="~{fragments/gabarit :: menu('gestion-humaine')}"></aside>
+    <main class="min-w-0 flex-1">
+        <div class="mb-3.5 flex items-center justify-between gap-4">
+            <h1 class="text-[28px] font-medium">Gestion Hummaine</h1>
+            <div class="flex items-center gap-3">
+                <button class="bouton-principal" type="button" th:data-popup="@{/utilisateurs/nouveau}">
+                    <i class="bi bi-plus-lg"></i>Ajouter
+                </button>
+                <form th:replace="~{fragments/gabarit :: recherche}"></form>
+            </div>
+        </div>
+
+        <nav class="mb-3.5 flex">
+            <a class="onglet bg-vert text-white" th:href="@{/utilisateurs}">Comptes sur le site</a>
+            <a class="onglet" th:href="@{/prestataires}">Prestataires</a>
+        </nav>
+
+        <div class="overflow-hidden rounded-xl bg-surface-claire">
+            <table class="tableau-donnees">
+                <thead>
+                <tr>
+                    <th>N°</th>
+                    <th>Nom</th>
+                    <th>Identifiant</th>
+                    <th>Rôle</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(utilisateurs)}">
+                    <td class="py-7 text-center text-secondaire" colspan="5">Aucun compte</td>
+                </tr>
+                <tr th:each="utilisateur : ${utilisateurs}">
+                    <td class="text-secondaire" th:text="|#${utilisateur.id}|">#1</td>
+                    <td class="font-medium" th:text="|${utilisateur.prenom} ${utilisateur.nom}|">Prénom Nom</td>
+                    <td class="font-medium" th:text="${utilisateur.identifiant}">identifiant</td>
+                    <td class="font-medium text-vert-fonce" th:text="${utilisateur.profil.libelle}">Profil</td>
+                    <td>
+                        <div class="flex flex-wrap justify-end gap-2.5">
+                            <button class="bouton-secondaire" type="button"
+                                    th:data-popup="@{/utilisateurs/{id}/modification(id=${utilisateur.id})}">
+                                <i class="bi bi-pencil"></i>Modifier
+                            </button>
+                            <button class="bouton-secondaire" type="button"
+                                    th:data-suppression="@{/utilisateurs/{id}(id=${utilisateur.id})}"
+                                    th:data-confirmation="|Supprimer le compte de ${utilisateur.prenom} ${utilisateur.nom} ?|">
+                                <i class="bi bi-trash"></i>Supprimer
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div th:replace="~{fragments/gabarit :: pagination}"></div>
+        </div>
+    </main>
+</div>
+<div th:replace="~{fragments/gabarit :: popup}"></div>
+</body>
+</html>

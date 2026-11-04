@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="entete(titre)">
+    <th:block th:fragment="styles">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" th:href="@{/images/logo-icone.svg}">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+        <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {sans: ["Poppins", "sans-serif"]},
+                        colors: {
+                            "vert-fonce": "#507B3E",
+                            "vert": "#66994F",
+                            "vert-clair": "#E0EADC",
+                            "vert-menu": "#D7E3D1",
+                            "fond": "#F9F9F9",
+                            "surface": "#EEEEEE",
+                            "surface-claire": "#F3F3F3",
+                            "entete-tableau": "#E8E8E8",
+                            "texte": "#1D1D1B",
+                            "secondaire": "#8C8C8C",
+                            "urgence-verte": "#46A51E",
+                            "urgence-orange": "#F29D38",
+                            "urgence-rouge": "#E5383B",
+                            "erreur": "#C62828"
+                        }
+                    }
+                }
+            };
+        </script>
+        <style type="text/tailwindcss">
+            @layer components {
+                .bouton-principal {
+                    @apply inline-flex cursor-pointer items-center gap-2 whitespace-nowrap rounded-[3px] bg-vert-fonce px-4 py-1.5 text-sm text-white hover:brightness-95;
+                }
+                .bouton-secondaire {
+                    @apply inline-flex cursor-pointer items-center gap-2 whitespace-nowrap rounded-[3px] bg-vert-clair px-4 py-1.5 text-sm text-vert-fonce enabled:hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-45;
+                }
+                .champ-saisie {
+                    @apply w-full rounded-[3px] border-0 bg-vert-clair px-2.5 py-2 outline-none;
+                }
+                .libelle {
+                    @apply mb-1.5 block;
+                }
+                .encart {
+                    @apply flex max-w-[230px] items-center justify-between gap-3.5 rounded bg-surface px-4 py-1.5 leading-tight;
+                }
+                .onglet {
+                    @apply flex-1 rounded-sm p-2.5 text-center text-xl;
+                }
+                .tableau-donnees {
+                    @apply w-full border-collapse;
+                }
+                .tableau-donnees th {
+                    @apply bg-entete-tableau px-4 py-3.5 text-left font-semibold;
+                }
+                .tableau-donnees td {
+                    @apply px-4 py-3 align-middle;
+                }
+                .tableau-donnees tbody tr {
+                    @apply odd:bg-fond even:bg-surface-claire;
+                }
+            }
+        </style>
+    </th:block>
+    <meta name="csrf-parametre" th:content="${_csrf.parameterName}">
+    <meta name="csrf-jeton" th:content="${_csrf.token}">
+    <title th:text="|${titre} · IDFLM|">IDFLM</title>
+    <script th:src="@{/js/popups.js}" defer></script>
+</head>
+<body>
+
+<aside class="sticky top-4 flex h-[calc(100vh-2rem)] w-[261px] shrink-0 flex-col gap-3 self-start"
+       th:fragment="menu(pageActive)">
+    <a class="flex shrink-0 items-center gap-4 rounded-lg bg-surface px-5 py-3" th:href="@{/}">
+        <img class="h-10 w-auto" th:src="@{/images/logo-icone.svg}" alt="">
+        <img class="h-5 w-auto" th:src="@{/images/logo-texte.svg}" alt="IDFLM">
+    </a>
+    <nav class="flex shrink-0 flex-col rounded-lg bg-surface px-2.5 pb-2 pt-3">
+        <a th:if="${estResponsable}" th:href="@{/tableau-de-bord}"
+           class="flex items-center gap-4 rounded-md px-3.5 py-1.5 hover:brightness-95"
+           th:classappend="${pageActive == 'tableau-de-bord'} ? 'bg-vert-menu text-vert-fonce'">
+            <i class="bi bi-speedometer2"></i>Tableau de bord
+        </a>
+        <a th:href="@{/incidents}" class="flex items-center gap-4 rounded-md px-3.5 py-1.5 hover:brightness-95"
+           th:classappend="${pageActive == 'incidents'} ? 'bg-vert-menu text-vert-fonce'">
+            <i class="bi bi-file-earmark"></i>Fiches Incident
+        </a>
+        <a th:href="@{/equipements}" class="flex items-center gap-4 rounded-md px-3.5 py-1.5 hover:brightness-95"
+           th:classappend="${pageActive == 'equipements'} ? 'bg-vert-menu text-vert-fonce'">
+            <i class="bi bi-train-front"></i>Equipements
+        </a>
+        <a th:href="@{/lignes}" class="flex items-center gap-4 rounded-md px-3.5 py-1.5 hover:brightness-95"
+           th:classappend="${pageActive == 'lignes'} ? 'bg-vert-menu text-vert-fonce'">
+            <i class="bi bi-sign-railroad"></i>Lignes/Stations
+        </a>
+        <a th:if="${estResponsable}" th:href="@{/utilisateurs}"
+           class="flex items-center gap-4 rounded-md px-3.5 py-1.5 hover:brightness-95"
+           th:classappend="${pageActive == 'gestion-humaine'} ? 'bg-vert-menu text-vert-fonce'">
+            <i class="bi bi-people"></i>Gestion Hummaine
+        </a>
+        <span class="mt-1.5 text-[11px] text-secondaire">V1.0.0</span>
+    </nav>
+    <section class="flex min-h-0 flex-1 flex-col rounded-lg bg-surface p-4">
+        <div class="flex items-center gap-2.5">
+            <span class="rounded-sm bg-vert-menu px-1.5 py-0.5 font-semibold"
+                  th:text="${#lists.size(signalementsEnCours)}">0</span>
+            <div class="leading-none">
+                <strong class="block text-[15px] font-medium">Signalements</strong>
+                <small class="text-[13px] text-secondaire">Fiches de signalements</small>
+            </div>
+        </div>
+        <span class="mb-2.5 mt-4 flex items-center gap-2 font-medium text-vert-fonce">
+            <span class="h-2 w-2 rounded-full bg-vert-fonce"></span>En cours
+        </span>
+        <ul class="relative flex min-h-0 flex-1 flex-col gap-1.5 overflow-hidden" data-signalements>
+            <li th:each="signalement : ${signalementsEnCours}">
+                <a href="#" class="flex items-start gap-2.5"
+                   th:data-popup="@{/incidents/{id}(id=${signalement.incident().id})}">
+                    <i class="bi bi-file-text text-lg"></i>
+                    <span class="min-w-0">
+                        <strong class="block truncate text-[15px] font-medium leading-tight"
+                                th:text="${signalement.incident().titre}">Titre</strong>
+                        <small class="block text-[10px] text-secondaire"
+                               th:text="|${#numbers.formatInteger(signalement.dureeOuverture().toHours(), 2)}:${#numbers.formatInteger(signalement.dureeOuverture().toMinutesPart(), 2)}:${#numbers.formatInteger(signalement.dureeOuverture().toSecondsPart(), 2)}|">00:00:00</small>
+                    </span>
+                </a>
+            </li>
+        </ul>
+        <a class="pt-3 text-[13px] text-vert-fonce underline" th:href="@{/incidents}">Voir tout</a>
+    </section>
+    <section class="relative shrink-0 rounded-lg bg-surface px-2.5 py-3">
+        <div class="h-10 w-10 rounded-md bg-[#DCDCDC]"></div>
+        <button class="absolute right-2 top-2 h-7 w-7 cursor-pointer rounded bg-vert-menu text-vert-fonce" type="button"
+                title="Paramètres" th:data-popup="@{/parametres}">
+            <i class="bi bi-gear"></i>
+        </button>
+        <strong class="mt-4 block text-[17px] font-semibold leading-none"
+                th:text="|${utilisateurConnecte.prenom} ${utilisateurConnecte.nom}|">Prénom Nom</strong>
+        <small class="text-[13px] text-vert-fonce" th:text="${utilisateurConnecte.profil.libelle}">Profil</small>
+    </section>
+</aside>
+
+<form class="flex w-48 items-center gap-2.5 rounded-md bg-surface px-3.5 py-1.5" method="get" th:fragment="recherche">
+    <i class="bi bi-search"></i>
+    <input class="w-full border-0 bg-transparent outline-none" type="search" name="recherche"
+           placeholder="Rechercher" th:value="${recherche}">
+</form>
+
+<div class="flex items-center justify-between bg-entete-tableau px-4 py-3.5" th:fragment="pagination">
+    <span>
+        <span class="mr-2 inline-block rounded px-1.5 ring-[1.5px] ring-inset ring-texte"
+              th:text="${pagination.nombreResultats()}">0</span>résultats
+    </span>
+    <span class="flex items-center gap-5">
+        <a th:if="${pagination.urlPagePrecedente() != null}" th:href="${pagination.urlPagePrecedente()}"
+           title="Page précédente"><i class="bi bi-chevron-left"></i></a>
+        <i th:unless="${pagination.urlPagePrecedente() != null}" class="bi bi-chevron-left text-[#C4C4C4]"></i>
+        <span th:text="${pagination.numeroPage()}">1</span>
+        <a th:if="${pagination.urlPageSuivante() != null}" th:href="${pagination.urlPageSuivante()}"
+           title="Page suivante"><i class="bi bi-chevron-right"></i></a>
+        <i th:unless="${pagination.urlPageSuivante() != null}" class="bi bi-chevron-right text-[#C4C4C4]"></i>
+    </span>
+</div>
+
+<div th:fragment="emplacement(station)">
+    <strong class="block font-semibold" th:text="${station.nom}">Station</strong>
+    <div class="flex flex-wrap gap-1">
+        <span class="inline-flex items-center gap-1 rounded-md px-1.5 text-[11px]"
+              th:each="ligne : ${lignesParStation.get(station.id)}"
+              th:style="|color: ${ligne.couleur}; background: ${ligne.couleur}26|">
+            <img class="h-2.5 w-2.5" th:if="${ligne.image}" th:src="${ligne.image}" alt="">
+            <span th:text="${ligne.nom}">Ligne</span>
+        </span>
+    </div>
+</div>
+
+<span class="inline-flex gap-1.5 text-xl text-vert-fonce" th:fragment="etoiles(note)" th:title="|${note} sur 5|">
+    <i th:each="rang : ${#numbers.sequence(1, 5)}" class="bi"
+       th:classappend="${rang <= note} ? 'bi-star-fill' : 'bi-star'"></i>
+</span>
+
+<span th:fragment="pastille(niveau)" class="h-2.5 w-2.5 shrink-0 rounded-full" th:title="${niveau.libelle}"
+      th:classappend="${niveau.name() == 'VERT'} ? 'bg-urgence-verte' : (${niveau.name() == 'ORANGE'} ? 'bg-urgence-orange' : (${niveau.name() == 'ROUGE'} ? 'bg-urgence-rouge' : 'bg-fond ring-2 ring-inset ring-vert-fonce'))"></span>
+
+<th:block th:fragment="entetePopup(titre)">
+    <button class="absolute right-5 top-5 cursor-pointer text-lg" type="button" data-fermer-popup title="Fermer">
+        <i class="bi bi-x-lg"></i>
+    </button>
+    <h2 class="mb-4 text-[22px] font-medium" th:text="${titre}">Titre</h2>
+    <ul class="mb-4 list-disc pl-5 text-sm text-erreur" th:if="${erreurs}">
+        <li th:each="erreur : ${erreurs}" th:text="${erreur}">Erreur</li>
+    </ul>
+</th:block>
+
+<div class="fixed inset-0 z-10 hidden items-center justify-center bg-texte/35" id="popup" th:fragment="popup">
+    <div class="popup-contenu relative max-h-[88vh] w-[560px] overflow-auto rounded-xl bg-fond px-8 py-7"></div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,43 @@
+<div xmlns:th="http://www.thymeleaf.org" th:remove="tag">
+    <th:block th:replace="~{fragments/gabarit :: entetePopup(${idEquipement} ? 'Modifier l’équipement' : 'Ajouter un équipement')}"></th:block>
+    <form th:action="${idEquipement} ? @{/equipements/{id}(id=${idEquipement})} : @{/equipements}"
+          th:method="${idEquipement} ? 'put' : 'post'" data-formulaire-popup>
+        <div class="mb-4">
+            <label class="libelle" for="reference">Référence</label>
+            <input class="champ-saisie" id="reference" name="reference" maxlength="50" required
+                   th:value="${formulaire.reference()}">
+        </div>
+        <div class="mb-4">
+            <label class="libelle" for="nom">Nom</label>
+            <input class="champ-saisie" id="nom" name="nom" maxlength="100" required th:value="${formulaire.nom()}">
+        </div>
+        <div class="mb-4">
+            <label class="libelle" for="type">Type</label>
+            <input class="champ-saisie" id="type" name="type" maxlength="100" required th:value="${formulaire.type()}">
+        </div>
+        <div class="mb-4">
+            <label class="libelle" for="idStation">Station</label>
+            <select class="champ-saisie" id="idStation" name="idStation" data-recherche="Rechercher un arrêt">
+                <option value="">Choisir une station</option>
+                <option th:each="station : ${stations}" th:value="${station.id}" th:text="${station.nom}"
+                        th:selected="${station.id == formulaire.idStation()}">Station</option>
+            </select>
+        </div>
+        <div class="mb-4">
+            <label class="libelle" for="etat">Etat</label>
+            <select class="champ-saisie" id="etat" name="etat" required>
+                <option th:each="etat : ${etats}" th:value="${etat}" th:text="${etat.libelle}"
+                        th:selected="${etat == formulaire.etat()}">Etat</option>
+            </select>
+        </div>
+        <div class="mb-4">
+            <label class="libelle" for="description">Description</label>
+            <textarea class="champ-saisie min-h-[90px] resize-y" id="description" name="description" maxlength="500"
+                      th:text="${formulaire.description()}"></textarea>
+        </div>
+        <div class="mt-2.5 flex justify-end gap-2.5">
+            <button class="bouton-secondaire" type="button" data-fermer-popup>Annuler</button>
+            <button class="bouton-principal" type="submit">Enregistrer</button>
+        </div>
+    </form>
+</div>

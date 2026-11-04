@@ -6,8 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import java.util.List;
-
 public interface EquipementRepository extends JpaRepository<Equipement, Integer> {
 
     boolean existsByReference(String reference);
@@ -16,14 +14,13 @@ public interface EquipementRepository extends JpaRepository<Equipement, Integer>
 
     boolean existsByStationId(Integer idStation);
 
-    List<Equipement> findByStationIdOrderByNomAsc(Integer idStation);
-
     @Query("""
             SELECT e FROM Equipement e
-            WHERE LOWER(e.nom) LIKE LOWER(CONCAT('%', :recherche, '%'))
-            OR LOWER(e.reference) LIKE LOWER(CONCAT('%', :recherche, '%'))
-            OR LOWER(e.station.nom) LIKE LOWER(CONCAT('%', :recherche, '%'))
+            WHERE (:idStation IS NULL OR e.station.id = :idStation)
+            AND (LOWER(e.nom) LIKE LOWER(CONCAT('%', :recherche, '%'))
+                OR LOWER(e.reference) LIKE LOWER(CONCAT('%', :recherche, '%'))
+                OR LOWER(e.station.nom) LIKE LOWER(CONCAT('%', :recherche, '%')))
             ORDER BY e.nom
             """)
-    Page<Equipement> rechercherEquipements(String recherche, Pageable pagination);
+    Page<Equipement> rechercherEquipements(Integer idStation, String recherche, Pageable pagination);
 }

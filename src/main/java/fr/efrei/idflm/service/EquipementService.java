@@ -12,6 +12,7 @@ import fr.efrei.idflm.repository.IncidentRepository;
 import fr.efrei.idflm.repository.StationRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,12 +37,12 @@ public class EquipementService {
                 .orElseThrow(() -> new EquipementIntrouvableException(idEquipement));
     }
 
-    public Page<Equipement> rechercherEquipements(String recherche, Pageable pagination) {
-        return equipementRepository.rechercherEquipements(recherche, pagination);
+    public Page<Equipement> rechercherEquipements(Integer idStation, String recherche, Pageable pagination) {
+        return equipementRepository.rechercherEquipements(idStation, recherche, pagination);
     }
 
-    public List<Equipement> listerEquipementsDeLaStation(Integer idStation) {
-        return equipementRepository.findByStationIdOrderByNomAsc(idStation);
+    public List<Equipement> listerEquipements() {
+        return equipementRepository.findAll(Sort.by("nom"));
     }
 
     @Transactional

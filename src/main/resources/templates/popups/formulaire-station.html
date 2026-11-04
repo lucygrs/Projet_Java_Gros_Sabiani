@@ -1,0 +1,17 @@
+<div xmlns:th="http://www.thymeleaf.org" th:remove="tag">
+    <th:block th:replace="~{fragments/gabarit :: entetePopup(${idStation} ? 'Renommer la station' : |Ajouter une station à la ${ligne.nom}|)}"></th:block>
+    <form th:action="${idStation} ? @{/lignes/{idLigne}/stations/{idStation}(idLigne=${ligne.id}, idStation=${idStation})} : @{/lignes/{idLigne}/stations(idLigne=${ligne.id})}"
+          th:method="${idStation} ? 'put' : 'post'" data-formulaire-popup>
+        <div class="mb-4">
+            <label class="libelle" for="nom">Nom de la station</label>
+            <input class="champ-saisie" id="nom" name="nom" maxlength="100" required th:value="${formulaire.nom()}">
+        </div>
+        <p class="mb-4 text-sm text-secondaire" th:unless="${idStation}">
+            Une station qui existe déjà sur une autre ligne est réutilisée.
+        </p>
+        <div class="mt-2.5 flex justify-end gap-2.5">
+            <button class="bouton-secondaire" type="button" data-fermer-popup>Annuler</button>
+            <button class="bouton-principal" type="submit">Enregistrer</button>
+        </div>
+    </form>
+</div>

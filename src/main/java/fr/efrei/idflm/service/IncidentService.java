@@ -1,6 +1,7 @@
 package fr.efrei.idflm.service;
 
 import fr.efrei.idflm.dto.DeclarationIncidentFormulaire;
+import fr.efrei.idflm.dto.IncidentSuivi;
 import fr.efrei.idflm.dto.ModificationIncidentFormulaire;
 import fr.efrei.idflm.dto.ResolutionFormulaire;
 import fr.efrei.idflm.exception.EquipementIntrouvableException;
@@ -24,7 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class IncidentService {
@@ -33,15 +37,17 @@ public class IncidentService {
     private final EquipementRepository equipementRepository;
     private final PrestataireRepository prestataireRepository;
     private final EvaluationRepository evaluationRepository;
+    private final PolitiqueUrgence politiqueUrgence;
     private final Clock horloge;
 
     public IncidentService(IncidentRepository incidentRepository, EquipementRepository equipementRepository,
                            PrestataireRepository prestataireRepository, EvaluationRepository evaluationRepository,
-                           Clock horloge) {
+                           PolitiqueUrgence politiqueUrgence, Clock horloge) {
         this.incidentRepository = incidentRepository;
         this.equipementRepository = equipementRepository;
         this.prestataireRepository = prestataireRepository;
         this.evaluationRepository = evaluationRepository;
+        this.politiqueUrgence = politiqueUrgence;
         this.horloge = horloge;
     }
 
@@ -50,8 +56,20 @@ public class IncidentService {
                 .orElseThrow(() -> new IncidentIntrouvableException(idIncident));
     }
 
-    public Page<Incident> rechercherIncidentsEnCours(String recherche, Pageable pagination) {
-        return incidentRepository.rechercherIncidentsActifs(null, null, recherche, pagination);
+    public Page<IncidentSuivi> rechercherIncidentsActifs(Integer idStation, StatutIncident statut, String recherche,
+                                                         Pageable pagination) {
+        return incidentRepository.rechercherIncidentsActifs(idStation, statut, recherche, pagination)
+                .map(this::suivreIncident);
+    }
+
+    public List<IncidentSuivi> listerSignalementsEnCours() {
+        return incidentRepository.findByStatutNotOrderByDateOuvertureAsc(StatutIncident.RESOLU).stream()
+                .map(this::suivreIncident)
+                .toList();
+    }
+
+    public IncidentSuivi suivreIncident(Incident incident) {
+        return new IncidentSuivi(incident, politiqueUrgence.evaluer(incident), incident.dureeOuverture(horloge));
     }
 
     public Page<Incident> rechercherHistorique(String recherche, Pageable pagination) {
@@ -64,6 +82,12 @@ public class IncidentService {
 
     public Optional<Evaluation> trouverEvaluation(Integer idIncident) {
         return evaluationRepository.findByIncidentId(idIncident);
+    }
+
+    public Map<Integer, Evaluation> trouverEvaluations(List<Incident> incidents) {
+        List<Integer> idsIncidents = incidents.stream().map(Incident::getId).toList();
+        return evaluationRepository.findByIncidentIdIn(idsIncidents).stream()
+                .collect(Collectors.toMap(evaluation -> evaluation.getIncident().getId(), Function.identity()));
     }
 
     // L'incident et l'état de son équipement changent ensemble ou pas du tout (RG10)

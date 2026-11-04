@@ -1,0 +1,19 @@
+<div xmlns:th="http://www.thymeleaf.org" th:remove="tag">
+    <th:block th:replace="~{fragments/gabarit :: entetePopup(${idPrestataire} ? 'Modifier le prestataire' : 'Ajouter un prestataire')}"></th:block>
+    <form th:action="${idPrestataire} ? @{/prestataires/{id}(id=${idPrestataire})} : @{/prestataires}"
+          th:method="${idPrestataire} ? 'put' : 'post'" data-formulaire-popup>
+        <div class="mb-4">
+            <label class="libelle" for="nom">Nom</label>
+            <input class="champ-saisie" id="nom" name="nom" maxlength="100" required th:value="${formulaire.nom()}">
+        </div>
+        <div class="mb-4">
+            <label class="libelle" for="contact">Contact (téléphone ou courriel)</label>
+            <input class="champ-saisie" id="contact" name="contact" maxlength="100" required
+                   th:value="${formulaire.contact()}">
+        </div>
+        <div class="mt-2.5 flex justify-end gap-2.5">
+            <button class="bouton-secondaire" type="button" data-fermer-popup>Annuler</button>
+            <button class="bouton-principal" type="submit">Enregistrer</button>
+        </div>
+    </form>
+</div>

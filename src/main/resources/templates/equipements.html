@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/gabarit :: entete('Equipements')}"></head>
+<body class="bg-fond font-sans text-texte">
+<div class="flex min-h-screen gap-11 px-10 py-4">
+    <aside th:replace="~{fragments/gabarit :: menu('equipements')}"></aside>
+    <main class="min-w-0 flex-1">
+        <a class="mb-2 inline-flex items-center gap-1.5 rounded-[3px] bg-vert-menu px-2 py-0.5 font-medium"
+           th:if="${stationFiltree}" th:href="@{/equipements}">
+            <i class="bi bi-arrow-left"></i>Retour
+        </a>
+        <div class="mb-3.5 flex items-center justify-between gap-4">
+            <h1 class="text-[28px] font-medium"
+                th:text="${stationFiltree} ? |Equipements de la station ${stationFiltree.nom}| : 'Equipements'">Equipements</h1>
+            <div class="flex items-center gap-3">
+                <button class="bouton-principal" type="button" th:if="${estResponsable}"
+                        th:data-popup="@{/equipements/nouveau}">
+                    <i class="bi bi-plus-lg"></i>Ajouter
+                </button>
+                <form class="flex w-48 items-center gap-2.5 rounded-md bg-surface px-3.5 py-1.5" method="get">
+                    <i class="bi bi-search"></i>
+                    <input type="hidden" name="station" th:if="${stationFiltree}" th:value="${stationFiltree.id}">
+                    <input class="w-full border-0 bg-transparent outline-none" type="search" name="recherche"
+                           placeholder="Rechercher" th:value="${recherche}">
+                </form>
+            </div>
+        </div>
+
+        <div class="overflow-hidden rounded-xl bg-surface-claire">
+            <table class="tableau-donnees">
+                <thead>
+                <tr>
+                    <th>N°</th>
+                    <th>Nom</th>
+                    <th>Description</th>
+                    <th>Emplacement</th>
+                    <th th:if="${estResponsable}">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(equipements)}">
+                    <td class="py-7 text-center text-secondaire" colspan="5">Aucun équipement</td>
+                </tr>
+                <tr th:each="equipement : ${equipements}">
+                    <td class="text-secondaire" th:text="|#${equipement.id}|">#1</td>
+                    <td>
+                        <a class="block cursor-pointer font-medium"
+                           th:data-popup="@{/equipements/{id}/fiche(id=${equipement.id})}"
+                           th:text="${equipement.nom}">Nom</a>
+                        <span class="block text-[15px] leading-tight text-secondaire" th:text="${equipement.type}">Type</span>
+                        <span class="inline-block rounded-[3px] px-2 text-[11px] font-semibold"
+                              th:classappend="${equipement.etat.name() == 'EN_SERVICE'} ? 'bg-vert-clair' : (${equipement.etat.name() == 'EN_PANNE'} ? 'bg-[#FBE3D0]' : 'bg-[#F6D5D5]')"
+                              th:text="${equipement.etat.libelle}">En service</span>
+                    </td>
+                    <td class="text-[15px] leading-tight text-secondaire" th:text="${equipement.description}">Description</td>
+                    <td th:insert="~{fragments/gabarit :: emplacement(${equipement.station})}"></td>
+                    <td th:if="${estResponsable}">
+                        <div class="flex flex-wrap justify-end gap-2.5">
+                            <button class="bouton-secondaire" type="button"
+                                    th:data-popup="@{/equipements/{id}/modification(id=${equipement.id})}">
+                                <i class="bi bi-pencil"></i>Modifier
+                            </button>
+                            <button class="bouton-secondaire" type="button"
+                                    th:data-suppression="@{/equipements/{id}(id=${equipement.id})}"
+                                    th:data-confirmation="|Supprimer l’équipement « ${equipement.nom} » ?|">
+                                <i class="bi bi-trash"></i>Supprimer
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div th:replace="~{fragments/gabarit :: pagination}"></div>
+        </div>
+    </main>
+</div>
+<div th:replace="~{fragments/gabarit :: popup}"></div>
+</body>
+</html>

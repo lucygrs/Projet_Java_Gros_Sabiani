@@ -5,4 +5,8 @@ public class UtilisateurIntrouvableException extends RessourceIntrouvableExcepti
     public UtilisateurIntrouvableException(Integer id) {
         super("L'utilisateur " + id + " n'existe pas");
     }
+
+    public UtilisateurIntrouvableException(String identifiant) {
+        super("L'utilisateur " + identifiant + " n'existe pas");
+    }
 }

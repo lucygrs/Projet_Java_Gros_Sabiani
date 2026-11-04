@@ -1,5 +1,6 @@
 package fr.efrei.idflm.service;
 
+import fr.efrei.idflm.dto.InformationsPersonnellesFormulaire;
 import fr.efrei.idflm.dto.UtilisateurFormulaire;
 import fr.efrei.idflm.exception.IdentifiantDejaUtiliseException;
 import fr.efrei.idflm.exception.MotDePasseObligatoireException;
@@ -60,6 +61,32 @@ class UtilisateurServiceTest {
 
         assertThatThrownBy(() -> utilisateurService.creerUtilisateur(formulaire("lucy.gros", MOT_DE_PASSE)))
                 .isInstanceOf(IdentifiantDejaUtiliseException.class);
+    }
+
+    @Test
+    void modifierSesInformationsAvecUnIdentifiantDejaPrisEstRefuse() {
+        Utilisateur connecte = new Utilisateur();
+        connecte.setIdentifiant("lucy.gros");
+        when(utilisateurRepository.findByIdentifiant("lucy.gros")).thenReturn(Optional.of(connecte));
+        when(utilisateurRepository.existsByIdentifiant("aubin.sabiani")).thenReturn(true);
+        InformationsPersonnellesFormulaire formulaire =
+                new InformationsPersonnellesFormulaire("aubin.sabiani", "Gros", "Lucy");
+
+        assertThatThrownBy(() -> utilisateurService.modifierInformationsPersonnelles("lucy.gros", formulaire))
+                .isInstanceOf(IdentifiantDejaUtiliseException.class);
+    }
+
+    @Test
+    void modifierSesInformationsChangeLIdentifiantDeConnexion() {
+        Utilisateur connecte = new Utilisateur();
+        connecte.setIdentifiant("lucy.gros");
+        when(utilisateurRepository.findByIdentifiant("lucy.gros")).thenReturn(Optional.of(connecte));
+
+        utilisateurService.modifierInformationsPersonnelles("lucy.gros",
+                new InformationsPersonnellesFormulaire("l.gros", "Gros", "Lucie"));
+
+        assertThat(connecte.getIdentifiant()).isEqualTo("l.gros");
+        assertThat(connecte.getPrenom()).isEqualTo("Lucie");
     }
 
     @Test

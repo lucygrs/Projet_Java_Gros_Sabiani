@@ -1,0 +1,24 @@
+<div xmlns:th="http://www.thymeleaf.org" th:remove="tag">
+    <th:block th:replace="~{fragments/gabarit :: entetePopup(${idLigne} ? 'Modifier la ligne' : 'Ajouter une ligne')}"></th:block>
+    <form th:action="${idLigne} ? @{/lignes/{id}(id=${idLigne})} : @{/lignes}"
+          th:method="${idLigne} ? 'put' : 'post'" data-formulaire-popup>
+        <div class="mb-4">
+            <label class="libelle" for="nom">Nom</label>
+            <input class="champ-saisie" id="nom" name="nom" maxlength="100" required th:value="${formulaire.nom()}">
+        </div>
+        <div class="mb-4">
+            <label class="libelle" for="fichierImage">Image</label>
+            <input class="champ-saisie" id="fichierImage" type="file" accept="image/*" data-image-base64>
+            <input type="hidden" name="image" th:value="${formulaire.image()}">
+        </div>
+        <div class="mb-4">
+            <label class="libelle" for="couleur">Couleur</label>
+            <input class="champ-saisie h-10 cursor-pointer p-1" id="couleur" name="couleur" type="color"
+                   th:value="${formulaire.couleur()}">
+        </div>
+        <div class="mt-2.5 flex justify-end gap-2.5">
+            <button class="bouton-secondaire" type="button" data-fermer-popup>Annuler</button>
+            <button class="bouton-principal" type="submit">Enregistrer</button>
+        </div>
+    </form>
+</div>

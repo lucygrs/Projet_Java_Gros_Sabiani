@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/gabarit :: entete('Lignes')}"></head>
+<body class="bg-fond font-sans text-texte">
+<div class="flex min-h-screen gap-11 px-10 py-4">
+    <aside th:replace="~{fragments/gabarit :: menu('lignes')}"></aside>
+    <main class="min-w-0 flex-1">
+        <div class="mb-3.5 flex items-center justify-between gap-4">
+            <h1 class="text-[28px] font-medium">Lignes</h1>
+            <div class="flex items-center gap-3">
+                <button class="bouton-principal" type="button" th:if="${estResponsable}"
+                        th:data-popup="@{/lignes/nouvelle}">
+                    <i class="bi bi-plus-lg"></i>Ajouter
+                </button>
+                <form th:replace="~{fragments/gabarit :: recherche}"></form>
+            </div>
+        </div>
+
+        <div class="overflow-hidden rounded-xl bg-surface-claire">
+            <table class="tableau-donnees">
+                <thead>
+                <tr>
+                    <th>N°</th>
+                    <th>Nom</th>
+                    <th>Image</th>
+                    <th>Couleur</th>
+                    <th>Nombre de stations</th>
+                    <th th:if="${estResponsable}">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(lignes)}">
+                    <td class="py-7 text-center text-secondaire" colspan="6">Aucune ligne</td>
+                </tr>
+                <tr th:each="ligne : ${lignes}">
+                    <td class="text-secondaire" th:text="|#${ligne.id}|">#1</td>
+                    <td><a class="font-medium" th:href="@{/lignes/{id}/stations(id=${ligne.id})}" th:text="${ligne.nom}">Ligne</a></td>
+                    <td><img th:if="${ligne.image}" th:src="${ligne.image}" alt="" width="26" height="26"></td>
+                    <td>
+                        <span class="flex items-center gap-2">
+                            <span class="h-6 w-6 shrink-0 rounded-[3px]" th:style="|background: ${ligne.couleur}|"></span>
+                            <span th:text="${ligne.couleur}">#000000</span>
+                        </span>
+                    </td>
+                    <td class="text-secondaire" th:text="${nombreStations.get(ligne.id)}">0</td>
+                    <td th:if="${estResponsable}">
+                        <div class="flex flex-wrap justify-end gap-2.5">
+                            <button class="bouton-secondaire" type="button"
+                                    th:data-popup="@{/lignes/{id}/modification(id=${ligne.id})}">
+                                <i class="bi bi-pencil"></i>Modifier
+                            </button>
+                            <button class="bouton-secondaire" type="button"
+                                    th:data-suppression="@{/lignes/{id}(id=${ligne.id})}"
+                                    th:data-confirmation="|Supprimer la ${ligne.nom} ?|">
+                                <i class="bi bi-trash"></i>Supprimer
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div th:replace="~{fragments/gabarit :: pagination}"></div>
+        </div>
+    </main>
+</div>
+<div th:replace="~{fragments/gabarit :: popup}"></div>
+</body>
+</html>

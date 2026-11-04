@@ -58,7 +58,7 @@ class IncidentServiceTest {
     void preparer() {
         Clock horlogeFigee = Clock.fixed(MAINTENANT.atZone(FUSEAU).toInstant(), FUSEAU);
         incidentService = new IncidentService(incidentRepository, equipementRepository, prestataireRepository,
-                evaluationRepository, horlogeFigee);
+                evaluationRepository, new PolitiqueUrgence(horlogeFigee), horlogeFigee);
         equipement = new Equipement();
         equipement.setId(ID_EQUIPEMENT);
         equipement.setEtat(EtatEquipement.EN_SERVICE);

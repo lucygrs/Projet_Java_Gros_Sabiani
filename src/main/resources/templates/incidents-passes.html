@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/gabarit :: entete('Fiches Incident passées')}"></head>
+<body class="bg-fond font-sans text-texte">
+<div class="flex min-h-screen gap-11 px-10 py-4">
+    <aside th:replace="~{fragments/gabarit :: menu('incidents')}"></aside>
+    <main class="min-w-0 flex-1">
+        <div class="mb-3.5 flex items-center justify-between gap-4">
+            <h1 class="text-[28px] font-medium">Fiches Incident</h1>
+            <div class="flex items-center gap-3">
+                <button class="bouton-principal" type="button" th:data-popup="@{/incidents/nouveau}">
+                    <i class="bi bi-plus-lg"></i>Ajouter
+                </button>
+                <form th:replace="~{fragments/gabarit :: recherche}"></form>
+            </div>
+        </div>
+
+        <nav class="mb-3.5 flex">
+            <a class="onglet" th:href="@{/incidents}">En cours</a>
+            <a class="onglet bg-vert text-white" th:href="@{/incidents/passes}">Passés</a>
+        </nav>
+
+        <div class="overflow-hidden rounded-xl bg-surface-claire">
+            <table class="tableau-donnees">
+                <thead>
+                <tr>
+                    <th>N°</th>
+                    <th>Nom</th>
+                    <th>Prestataire de résolution</th>
+                    <th>Equipement</th>
+                    <th>Emplacement</th>
+                    <th></th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(incidents)}">
+                    <td class="py-7 text-center text-secondaire" colspan="7">Aucun incident résolu</td>
+                </tr>
+                <tr th:each="incident : ${incidents}" th:with="evaluation=${evaluations.get(incident.id)}">
+                    <td class="text-secondaire" th:text="|#${incident.id}|">#1</td>
+                    <td>
+                        <span class="inline-block rounded-[3px] bg-vert-clair px-2 text-[11px] font-semibold"
+                              th:text="|${#temporals.format(incident.dateOuverture, 'dd.MM.yy')} → ${#temporals.format(incident.dateResolution, 'dd.MM.yy')}|">01.01.26 → 02.01.26</span>
+                        <a class="block cursor-pointer font-medium" th:data-popup="@{/incidents/{id}(id=${incident.id})}"
+                           th:text="${incident.titre}">Titre</a>
+                        <span class="block text-[15px] leading-tight text-secondaire"
+                              th:text="${incident.description}">Description</span>
+                    </td>
+                    <td>
+                        <span class="encart" th:if="${incident.prestataire}">
+                            <span><strong class="block font-medium" th:text="${incident.prestataire.nom}">Prestataire</strong>
+                                <small class="text-[15px] text-secondaire" th:text="${incident.prestataire.contact}">Contact</small></span>
+                        </span>
+                    </td>
+                    <td>
+                        <a class="encart cursor-pointer"
+                           th:data-popup="@{/equipements/{id}/fiche(id=${incident.equipement.id})}">
+                            <span><strong class="block font-medium" th:text="${incident.equipement.nom}">Equipement</strong>
+                                <small class="text-[15px] text-secondaire" th:text="|#${incident.equipement.reference}|">#00000</small></span>
+                            <i class="bi bi-box-arrow-up-right"></i>
+                        </a>
+                    </td>
+                    <td th:insert="~{fragments/gabarit :: emplacement(${incident.equipement.station})}"></td>
+                    <td>
+                        <th:block th:if="${evaluation}">
+                            <span th:replace="~{fragments/gabarit :: etoiles(${evaluation.note})}"></span>
+                        </th:block>
+                        <span class="text-secondaire" th:unless="${evaluation}">Non évalué</span>
+                    </td>
+                    <td>
+                        <div class="flex flex-wrap justify-end gap-2.5">
+                            <button class="bouton-secondaire" type="button"
+                                    th:data-popup="@{/incidents/{id}/evaluation(id=${incident.id})}">
+                                <i class="bi bi-eye"></i>Voir l’évaluation
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div th:replace="~{fragments/gabarit :: pagination}"></div>
+        </div>
+    </main>
+</div>
+<div th:replace="~{fragments/gabarit :: popup}"></div>
+</body>
+</html>

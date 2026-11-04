@@ -1,0 +1,47 @@
+<div xmlns:th="http://www.thymeleaf.org" th:remove="tag">
+    <th:block th:replace="~{fragments/gabarit :: entetePopup('Paramètres')}"></th:block>
+    <div>
+        <span th:text="|Bonjour ${utilisateurConnecte.prenom} (${utilisateurConnecte.profil.libelle})|">Bonjour</span>
+        |
+        <form class="inline" th:action="@{/deconnexion}" method="post">
+            <button class="cursor-pointer text-vert-fonce underline" type="submit">Déconnectez-vous</button>
+        </form>
+    </div>
+    <div class="my-5 h-px bg-entete-tableau"></div>
+    <form th:action="@{/parametres/informations}" th:method="put" data-formulaire-popup
+          th:with="saisie=${informations}">
+        <h3 class="mb-3 text-lg font-medium">Mes informations</h3>
+        <div class="mb-4 grid grid-cols-2 gap-3">
+            <div>
+                <label class="libelle" for="prenom">Prénom</label>
+                <input class="champ-saisie" id="prenom" name="prenom" maxlength="100" required
+                       th:value="${saisie != null} ? ${saisie.prenom()} : ${utilisateurConnecte.prenom}">
+            </div>
+            <div>
+                <label class="libelle" for="nom">Nom</label>
+                <input class="champ-saisie" id="nom" name="nom" maxlength="100" required
+                       th:value="${saisie != null} ? ${saisie.nom()} : ${utilisateurConnecte.nom}">
+            </div>
+        </div>
+        <div class="mb-4">
+            <label class="libelle" for="identifiant">Identifiant de connexion</label>
+            <input class="champ-saisie" id="identifiant" name="identifiant" maxlength="100" required autocomplete="off"
+                   th:value="${saisie != null} ? ${saisie.identifiant()} : ${utilisateurConnecte.identifiant}">
+        </div>
+        <div class="flex justify-end">
+            <button class="bouton-principal" type="submit">Enregistrer mes informations</button>
+        </div>
+    </form>
+    <div class="my-5 h-px bg-entete-tableau"></div>
+    <form th:action="@{/parametres/mot-de-passe}" th:method="put" data-formulaire-popup>
+        <div class="mb-4">
+            <label class="libelle" for="nouveauMotDePasse">Changer mon mot de passe</label>
+            <input class="champ-saisie" id="nouveauMotDePasse" name="nouveauMotDePasse" type="password" minlength="8"
+                   maxlength="72" autocomplete="new-password" placeholder="8 caractères minimum" required>
+        </div>
+        <div class="flex justify-end gap-2.5">
+            <button class="bouton-secondaire" type="button" data-fermer-popup>Fermer</button>
+            <button class="bouton-principal" type="submit">Enregistrer le mot de passe</button>
+        </div>
+    </form>
+</div>

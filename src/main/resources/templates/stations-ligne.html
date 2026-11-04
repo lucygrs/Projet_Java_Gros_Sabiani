@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/gabarit :: entete(|Stations de la ${ligne.nom}|)}"></head>
+<body class="bg-fond font-sans text-texte">
+<div class="flex min-h-screen gap-11 px-10 py-4">
+    <aside th:replace="~{fragments/gabarit :: menu('lignes')}"></aside>
+    <main class="min-w-0 flex-1">
+        <a class="mb-2 inline-flex items-center gap-1.5 rounded-[3px] bg-vert-menu px-2 py-0.5 font-medium"
+           th:href="@{/lignes}"><i class="bi bi-arrow-left"></i>Retour</a>
+        <div class="mb-3.5 flex items-center justify-between gap-4">
+            <h1 class="text-[28px] font-medium" th:text="|Station de la ${ligne.nom}|">Station de la ligne</h1>
+            <div class="flex items-center gap-3">
+                <button class="bouton-principal" type="button" th:if="${estResponsable}"
+                        th:data-popup="@{/lignes/{id}/stations/nouvelle(id=${ligne.id})}">
+                    <i class="bi bi-plus-lg"></i>Ajouter
+                </button>
+                <form th:replace="~{fragments/gabarit :: recherche}"></form>
+            </div>
+        </div>
+
+        <div class="overflow-hidden rounded-xl bg-surface-claire">
+            <table class="tableau-donnees">
+                <thead>
+                <tr>
+                    <th>N°</th>
+                    <th>Nom</th>
+                    <th th:if="${estResponsable}">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(stations)}">
+                    <td class="py-7 text-center text-secondaire" colspan="3">Aucune station</td>
+                </tr>
+                <tr th:each="station : ${stations}">
+                    <td class="text-secondaire" th:text="|#${station.id}|">#1</td>
+                    <td>
+                        <a class="font-medium" th:href="@{/equipements(station=${station.id})}" th:text="${station.nom}"
+                           title="Voir les équipements de la station">Station</a>
+                    </td>
+                    <td th:if="${estResponsable}">
+                        <div class="flex flex-wrap justify-end gap-2.5">
+                            <button class="bouton-secondaire" type="button"
+                                    th:data-popup="@{/lignes/{idLigne}/stations/{idStation}/modification(idLigne=${ligne.id}, idStation=${station.id})}">
+                                <i class="bi bi-pencil"></i>Modifier
+                            </button>
+                            <button class="bouton-secondaire" type="button"
+                                    th:data-suppression="@{/lignes/{idLigne}/stations/{idStation}(idLigne=${ligne.id}, idStation=${station.id})}"
+                                    th:data-confirmation="|Retirer la station « ${station.nom} » de la ${ligne.nom} ?|">
+                                <i class="bi bi-trash"></i>Supprimer
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div th:replace="~{fragments/gabarit :: pagination}"></div>
+        </div>
+    </main>
+</div>
+<div th:replace="~{fragments/gabarit :: popup}"></div>
+</body>
+</html>

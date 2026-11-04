@@ -1,5 +1,7 @@
 package fr.efrei.idflm.service;
 
+import fr.efrei.idflm.dto.InformationsPersonnellesFormulaire;
+import fr.efrei.idflm.dto.MotDePasseFormulaire;
 import fr.efrei.idflm.dto.UtilisateurFormulaire;
 import fr.efrei.idflm.exception.IdentifiantDejaUtiliseException;
 import fr.efrei.idflm.exception.MotDePasseObligatoireException;
@@ -29,6 +31,11 @@ public class UtilisateurService {
                 .orElseThrow(() -> new UtilisateurIntrouvableException(idUtilisateur));
     }
 
+    public Utilisateur trouverParIdentifiant(String identifiant) {
+        return utilisateurRepository.findByIdentifiant(identifiant)
+                .orElseThrow(() -> new UtilisateurIntrouvableException(identifiant));
+    }
+
     public Page<Utilisateur> rechercherUtilisateurs(String recherche, Pageable pagination) {
         return utilisateurRepository.rechercherUtilisateurs(recherche, pagination);
     }
@@ -50,12 +57,26 @@ public class UtilisateurService {
     @Transactional
     public Utilisateur modifierUtilisateur(Integer idUtilisateur, UtilisateurFormulaire formulaire) {
         Utilisateur utilisateur = trouverUtilisateur(idUtilisateur);
-        boolean identifiantChange = !utilisateur.getIdentifiant().equals(formulaire.identifiant());
-        if (identifiantChange && utilisateurRepository.existsByIdentifiant(formulaire.identifiant())) {
-            throw new IdentifiantDejaUtiliseException(formulaire.identifiant());
-        }
+        verifierIdentifiantDisponible(utilisateur, formulaire.identifiant());
         appliquerFormulaire(utilisateur, formulaire);
         return utilisateur;
+    }
+
+    @Transactional
+    public Utilisateur modifierInformationsPersonnelles(String identifiantActuel,
+                                                        InformationsPersonnellesFormulaire formulaire) {
+        Utilisateur utilisateur = trouverParIdentifiant(identifiantActuel);
+        verifierIdentifiantDisponible(utilisateur, formulaire.identifiant());
+        utilisateur.setIdentifiant(formulaire.identifiant());
+        utilisateur.setNom(formulaire.nom());
+        utilisateur.setPrenom(formulaire.prenom());
+        return utilisateur;
+    }
+
+    @Transactional
+    public void changerMotDePasse(String identifiant, MotDePasseFormulaire formulaire) {
+        Utilisateur utilisateur = trouverParIdentifiant(identifiant);
+        utilisateur.setMotDePasse(encodeurMotDePasse.encode(formulaire.nouveauMotDePasse()));
     }
 
     @Transactional
@@ -74,6 +95,13 @@ public class UtilisateurService {
         utilisateur.setProfil(formulaire.profil());
         if (motDePasseRenseigne(formulaire)) {
             utilisateur.setMotDePasse(encodeurMotDePasse.encode(formulaire.motDePasse()));
+        }
+    }
+
+    private void verifierIdentifiantDisponible(Utilisateur utilisateur, String identifiantSouhaite) {
+        boolean identifiantChange = !utilisateur.getIdentifiant().equals(identifiantSouhaite);
+        if (identifiantChange && utilisateurRepository.existsByIdentifiant(identifiantSouhaite)) {
+            throw new IdentifiantDejaUtiliseException(identifiantSouhaite);
         }
     }
 

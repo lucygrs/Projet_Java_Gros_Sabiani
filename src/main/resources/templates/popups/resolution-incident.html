@@ -1,0 +1,28 @@
+<div xmlns:th="http://www.thymeleaf.org" th:remove="tag">
+    <th:block th:replace="~{fragments/gabarit :: entetePopup('Résoudre l’incident')}"></th:block>
+    <p class="mb-4 text-secondaire" th:text="|#${incident.id} · ${incident.titre} · ${incident.prestataire?.nom}|">Incident</p>
+    <form th:action="@{/incidents/{id}/resolution(id=${incident.id})}" th:method="put" data-formulaire-popup>
+        <div class="mb-4">
+            <span class="libelle">Note du prestataire</span>
+            <div class="flex flex-row-reverse justify-end gap-1.5 text-[26px] text-vert-fonce">
+                <th:block th:each="note : ${#numbers.sequence(5, 1)}">
+                    <input class="peer hidden" type="radio" name="note" th:id="|note${note}|" th:value="${note}"
+                           required th:checked="${note == formulaire.note()}">
+                    <label class="cursor-pointer peer-checked:[&>.bi-star]:hidden peer-checked:[&>.bi-star-fill]:inline" th:for="|note${note}|" th:title="|${note} sur 5|">
+                        <i class="bi bi-star"></i>
+                        <i class="bi bi-star-fill hidden"></i>
+                    </label>
+                </th:block>
+            </div>
+        </div>
+        <div class="mb-4">
+            <label class="libelle" for="commentaire">Commentaire</label>
+            <textarea class="champ-saisie min-h-[90px] resize-y" id="commentaire" name="commentaire" maxlength="500"
+                      th:text="${formulaire.commentaire()}"></textarea>
+        </div>
+        <div class="mt-2.5 flex justify-end gap-2.5">
+            <button class="bouton-secondaire" type="button" data-fermer-popup>Annuler</button>
+            <button class="bouton-principal" type="submit">Résoudre</button>
+        </div>
+    </form>
+</div>

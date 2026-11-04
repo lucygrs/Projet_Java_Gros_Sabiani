@@ -12,7 +12,7 @@
   - Responsable d'exploitation : `aubin.sabiani` / `Responsable2026!`
   - Agent de signalement : `lucy.gros` / `Agent2026!`
 - Données de démonstration : 2 lignes, 6 stations, 11 équipements de 6 types, 4 prestataires, 12 incidents (6 non affectés ouverts depuis 2 h, 47 h, 48 h, 71 h, 72 h et 100 h ; 2 affectés ; 4 résolus dont 3 évalués)
-- Limites connues : …
+- Limites connues : l'interface charge Tailwind CSS, la police Poppins et Bootstrap Icons depuis des CDN : une connexion Internet est nécessaire pour un affichage correct
 
 ## ARCHITECTURE
 - Dépôt : https://github.com/lucygrs/Projet_Java_Gros_Sabiani
@@ -24,7 +24,14 @@
   - `service` : règles de gestion et cas d'usage, dont `PolitiqueUrgence` (seuils 48 h / 72 h)
   - `dto` : formulaires validés par Bean Validation et indicateurs du tableau de bord
   - `exception` : exceptions métier personnalisées
-  - `controleur` : partie suivante
+  - `controleur` : contrôleurs Spring MVC (pages Thymeleaf et fragments des pop-ups), pagination et traduction des exceptions en pages d'erreur (`GestionnaireErreursPages`)
+- Vues : `src/main/resources/templates` (pages, `fragments/gabarit.html` pour le menu, la pagination et la pop-up commune, `popups/` pour les fragments chargés en fetch), `static/js/popups.js`, `static/images`
+- Routes web :
+  - `/connexion`, `/deconnexion` : F1
+  - `/tableau-de-bord` : F11 (filtres station et statut, recherche, pagination)
+  - `/incidents` (en cours), `/incidents/passes` (F9), `/incidents/{id}` (F5), `/incidents/nouveau` (F4), `/incidents/{id}/modification` (F6), `/incidents/{id}/affectation` (F7), `/incidents/{id}/resolution` (F8 et F10), `/incidents/{id}/evaluation`
+  - `/equipements` (F2, filtrable par `?station=`), `/equipements/{id}/fiche` (F3)
+  - `/lignes`, `/lignes/{id}/stations`, `/utilisateurs`, `/prestataires`, `/parametres`
 - Modèle de données : `ligne`, `station`, `ligne_station`, `equipement`, `incident`, `prestataire`, `evaluation`, `utilisateur` (voir `schema.sql`)
 
 ## TESTS
@@ -51,7 +58,13 @@
   - une seule évaluation par incident (RG8)
   - les mots de passe sont stockés hachés
   - la requête native compte les stations d'une ligne
-- Non couvert : couche web, sécurité et API (parties 3 et 4)
+  - un utilisateur non connecté est renvoyé vers la page de connexion (RG11) ; un mauvais mot de passe réaffiche la connexion avec un message (F1) ; de bons identifiants ouvrent la session
+  - un agent reçoit 403 sur le tableau de bord, l'historique, l'affectation, la modification, les formulaires de création et la gestion humaine, même en forçant la requête (RG11) ; le responsable y accède
+  - un agent accède à la déclaration, au détail, à la résolution, aux équipements et aux lignes
+  - un incident inexistant affiche une page 404 avec un message en français, sans trace technique
+- Tests de la couche web : `@SpringBootTest` + MockMvc sur la base H2, avec une session authentifiée construite dans le test (sans dépendance supplémentaire)
+- Vérification manuelle dans un navigateur : connexion des deux profils, tableau de bord, pop-up de résolution (étoiles, envoi en fetch, passage dans l'historique), paramètres et déconnexion
+- Non couvert : API REST (partie 4)
 
 ## CHOIX TECHNIQUES
 - Droits par profil (source : tableau du plan relationnel) :
@@ -67,6 +80,9 @@
 | F10 | Évaluer un prestataire | Accès complet | Accès complet |
 | F11 | Tableau de bord | Accès complet | Interdit |
 
+- Interface : Tailwind CSS 3.4.16 chargé par son CDN (Play CDN) dans le fragment commun `gabarit.html`, avec les couleurs IDFLM dans `tailwind.config` et quelques composants (`bouton-principal`, `bouton-secondaire`, `champ-saisie`, `tableau-donnees`…) déclarés une seule fois avec `@apply` pour éviter de répéter les mêmes classes ; aucun fichier CSS. Limite : le Play CDN compile les styles dans le navigateur, il est prévu pour le prototypage et non pour la production (une compilation Tailwind par Maven serait l'étape suivante)
+- Listes déroulantes avec recherche : `popups.js` transforme les listes marquées `data-recherche` (équipement à la déclaration, station d'un équipement) en champ de recherche insensible aux accents ; la liste d'origine reste celle qui est envoyée
+- Sécurité : Spring Security avec une page de connexion personnalisée, comptes lus dans la table `utilisateur` (`ConnexionService`), mots de passe BCrypt, rôle Spring = profil. Les droits sont déclarés par URL et par verbe HTTP dans `SecuriteConfiguration` : un agent qui force une URL réservée reçoit une page « Accès refusé » (403), masquer les boutons n'est qu'un confort
 - Exceptions :
   - classe abstraite `ExceptionMetier` (non vérifiée, donc annule la transaction en cours) et une exception personnalisée par cas, avec un message en français qui dit quoi, sur quel objet et pourquoi
   - `RessourceIntrouvableException` regroupe les ressources inexistantes (incident, équipement, station, ligne, prestataire, utilisateur) : traduites en 404
@@ -105,10 +121,17 @@
 
 ## LOT ALPHA
 ### Fonctionnalité transverse 1 : recherche et pagination
-- Besoin · périmètre envisagé · choix et essais · ce qui fonctionne · difficultés · reste à faire
-- Partie 1 : requêtes de recherche paginées (`Page`/`Pageable`) dans les repositories des incidents, équipements, lignes, stations, prestataires et utilisateurs
+- Besoin : retrouver vite un incident, un équipement ou un compte quand les listes s'allongent
+- Périmètre : champ « Rechercher » et pagination de 10 lignes sur toutes les listes ; filtres station et statut sur le tableau de bord
+- Choix : requêtes JPQL paginées (`Page`, `Pageable`) dans les repositories, record `Pagination` qui construit les liens précédent et suivant en conservant la recherche et les filtres
+- Ce qui fonctionne : recherche, filtres et pagination sur le tableau de bord, les incidents, les équipements, les lignes, les stations, les comptes et les prestataires
+- Reste à faire : …
 ### Fonctionnalité transverse 2 : pop-ups asynchrones (fetch)
-- …
+- Besoin : déclarer, modifier, affecter, résoudre ou consulter sans quitter la page
+- Choix : `static/js/popups.js` charge un fragment Thymeleaf avec `fetch` et l'affiche dans une pop-up ; les formulaires sont envoyés en `fetch` ; une erreur de validation renvoie la pop-up avec le code 400 et les messages, une erreur métier renvoie un message avec le code 404 ou 409, un succès recharge la liste
+- Sécurité : le jeton CSRF accompagne chaque envoi, les verbes PUT et DELETE passent par le champ `_method`
+- Ce qui fonctionne : toutes les pop-ups (détail F5, fiche équipement F3, formulaires, résolution avec étoiles, évaluation, paramètres)
+- Reste à faire : …
 
 ## BILAN
 - Contribution de chacun : …

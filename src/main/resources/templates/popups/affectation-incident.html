@@ -1,0 +1,19 @@
+<div xmlns:th="http://www.thymeleaf.org" th:remove="tag">
+    <th:block th:replace="~{fragments/gabarit :: entetePopup(${incident.prestataire} ? 'Réaffecter un prestataire' : 'Affecter un prestataire')}"></th:block>
+    <p class="mb-4 text-secondaire" th:text="|#${incident.id} · ${incident.titre}|">Incident</p>
+    <form th:action="@{/incidents/{id}/affectation(id=${incident.id})}" th:method="put" data-formulaire-popup>
+        <div class="mb-4">
+            <label class="libelle" for="idPrestataire">Prestataire de résolution</label>
+            <select class="champ-saisie" id="idPrestataire" name="idPrestataire" required>
+                <option value="">Choisir un prestataire</option>
+                <option th:each="prestataire : ${prestataires}" th:value="${prestataire.id}"
+                        th:selected="${incident.prestataire != null and prestataire.id == incident.prestataire.id}"
+                        th:text="|${prestataire.nom} · ${prestataire.contact}|">Prestataire</option>
+            </select>
+        </div>
+        <div class="mt-2.5 flex justify-end gap-2.5">
+            <button class="bouton-secondaire" type="button" data-fermer-popup>Annuler</button>
+            <button class="bouton-principal" type="submit">Affecter</button>
+        </div>
+    </form>
+</div>

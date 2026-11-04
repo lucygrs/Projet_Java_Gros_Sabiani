@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class StationService {
@@ -39,6 +41,12 @@ public class StationService {
 
     public List<Station> listerStations() {
         return stationRepository.findAllByOrderByNomAsc();
+    }
+
+    public Map<Integer, List<Ligne>> regrouperLignesParStation(List<Integer> idsStations) {
+        return ligneStationRepository.findByStationIdIn(idsStations).stream()
+                .collect(Collectors.groupingBy(desserte -> desserte.getStation().getId(),
+                        Collectors.mapping(LigneStation::getLigne, Collectors.toList())));
     }
 
     public Page<Station> rechercherStationsDeLaLigne(Integer idLigne, String recherche, Pageable pagination) {

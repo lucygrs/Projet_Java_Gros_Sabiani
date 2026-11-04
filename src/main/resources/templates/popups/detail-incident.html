@@ -1,0 +1,39 @@
+<div xmlns:th="http://www.thymeleaf.org" th:remove="tag" th:with="incident=${suivi.incident()}">
+    <th:block th:replace="~{fragments/gabarit :: entetePopup(${incident.titre})}"></th:block>
+    <dl class="mb-4 grid grid-cols-[170px_1fr] gap-x-4 gap-y-2">
+        <dt class="text-secondaire">Numéro</dt>
+        <dd th:text="|#${incident.id}|">#1</dd>
+        <dt class="text-secondaire">Description</dt>
+        <dd th:text="${incident.description} ?: 'Aucune description'">Description</dd>
+        <dt class="text-secondaire">Equipement</dt>
+        <dd th:text="|${incident.equipement.nom} (#${incident.equipement.reference})|">Equipement</dd>
+        <dt class="text-secondaire">Station</dt>
+        <dd th:text="${incident.equipement.station.nom}">Station</dd>
+        <dt class="text-secondaire">Ouverture</dt>
+        <dd th:text="${#temporals.format(incident.dateOuverture, 'd MMMM yyyy à HH:mm')}">Date</dd>
+        <dt class="text-secondaire" th:text="${incident.estResolu()} ? 'Durée d’ouverture' : 'Ouvert depuis'">Ouvert depuis</dt>
+        <dd th:text="|${suivi.dureeOuverture().toDays()} j ${suivi.dureeOuverture().toHoursPart()} h ${suivi.dureeOuverture().toMinutesPart()} min|">0 j</dd>
+        <dt class="text-secondaire">Statut</dt>
+        <dd>
+            <span class="flex items-center gap-2" th:if="${!incident.estResolu()}">
+                <span th:replace="~{fragments/gabarit :: pastille(${suivi.niveauAttention()})}"></span>
+                <span th:text="${suivi.niveauAttention().libelle}">Niveau</span>
+            </span>
+            <span th:if="${incident.estResolu()}"
+                  th:text="|Résolu le ${#temporals.format(incident.dateResolution, 'd MMMM yyyy à HH:mm')}|">Résolu</span>
+        </dd>
+        <dt class="text-secondaire">Prestataire</dt>
+        <dd th:text="${incident.prestataire} ? |${incident.prestataire.nom} (${incident.prestataire.contact})| : 'Aucun'">Aucun</dd>
+        <dt class="text-secondaire">Evaluation</dt>
+        <dd>
+            <th:block th:if="${evaluation}">
+                <span th:replace="~{fragments/gabarit :: etoiles(${evaluation.note})}"></span>
+                <span class="block text-[15px] text-secondaire" th:text="${evaluation.commentaire}">Commentaire</span>
+            </th:block>
+            <span class="text-secondaire" th:unless="${evaluation}">Aucune</span>
+        </dd>
+    </dl>
+    <div class="flex justify-end">
+        <button class="bouton-principal" type="button" data-fermer-popup>Fermer</button>
+    </div>
+</div>

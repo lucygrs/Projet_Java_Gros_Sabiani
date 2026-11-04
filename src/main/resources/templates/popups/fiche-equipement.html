@@ -1,0 +1,36 @@
+<div xmlns:th="http://www.thymeleaf.org" th:remove="tag">
+    <th:block th:replace="~{fragments/gabarit :: entetePopup(${equipement.nom})}"></th:block>
+    <dl class="mb-4 grid grid-cols-[170px_1fr] gap-x-4 gap-y-2">
+        <dt class="text-secondaire">Référence</dt>
+        <dd th:text="|#${equipement.reference}|">#00000</dd>
+        <dt class="text-secondaire">Type</dt>
+        <dd th:text="${equipement.type}">Type</dd>
+        <dt class="text-secondaire">Etat</dt>
+        <dd th:text="${equipement.etat.libelle}">Etat</dd>
+        <dt class="text-secondaire">Station</dt>
+        <dd th:text="${equipement.station.nom}">Station</dd>
+        <dt class="text-secondaire">Description</dt>
+        <dd th:text="${equipement.description} ?: 'Aucune description'">Description</dd>
+    </dl>
+    <h3 class="mb-2 text-lg font-medium">Incidents en cours</h3>
+    <ul class="mb-4 flex flex-col gap-2">
+        <li class="rounded bg-surface px-3 py-2" th:each="incident : ${incidents}" th:unless="${incident.estResolu()}">
+            <a class="cursor-pointer font-medium" th:data-popup="@{/incidents/{id}(id=${incident.id})}"
+               th:text="${incident.titre}">Titre</a>
+            <span class="block text-[15px] text-secondaire"
+                  th:text="|Ouvert le ${#temporals.format(incident.dateOuverture, 'd MMMM yyyy à HH:mm')}|">Date</span>
+        </li>
+    </ul>
+    <h3 class="mb-2 text-lg font-medium">Incidents passés</h3>
+    <ul class="mb-4 flex flex-col gap-2">
+        <li class="rounded bg-surface px-3 py-2" th:each="incident : ${incidents}" th:if="${incident.estResolu()}">
+            <a class="cursor-pointer font-medium" th:data-popup="@{/incidents/{id}(id=${incident.id})}"
+               th:text="${incident.titre}">Titre</a>
+            <span class="block text-[15px] text-secondaire"
+                  th:text="|${#temporals.format(incident.dateOuverture, 'dd.MM.yy')} → ${#temporals.format(incident.dateResolution, 'dd.MM.yy')}|">Dates</span>
+        </li>
+    </ul>
+    <div class="flex justify-end">
+        <button class="bouton-principal" type="button" data-fermer-popup>Fermer</button>
+    </div>
+</div>
