@@ -14,6 +14,8 @@ public interface EquipementRepository extends JpaRepository<Equipement, Integer>
 
     boolean existsByReferenceAndIdNot(String reference, Integer id);
 
+    boolean existsByStationId(Integer idStation);
+
     List<Equipement> findByStationIdOrderByNomAsc(Integer idStation);
 
     @Query("""

@@ -1,6 +1,7 @@
 package fr.efrei.idflm.modele;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -24,43 +25,33 @@ public class Evaluation {
     @Column(name = "date_evaluation", nullable = false)
     private LocalDateTime dateEvaluation;
 
-    public Integer getId() {
-        return id;
+    protected Evaluation() {
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public Evaluation(Incident incident, Integer note, String commentaire, LocalDateTime dateEvaluation) {
+        this.incident = incident;
+        this.note = note;
+        this.commentaire = commentaire;
+        this.dateEvaluation = dateEvaluation;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     public Incident getIncident() {
         return incident;
     }
 
-    public void setIncident(Incident incident) {
-        this.incident = incident;
-    }
-
     public Integer getNote() {
         return note;
-    }
-
-    public void setNote(Integer note) {
-        this.note = note;
     }
 
     public String getCommentaire() {
         return commentaire;
     }
 
-    public void setCommentaire(String commentaire) {
-        this.commentaire = commentaire;
-    }
-
     public LocalDateTime getDateEvaluation() {
         return dateEvaluation;
-    }
-
-    public void setDateEvaluation(LocalDateTime dateEvaluation) {
-        this.dateEvaluation = dateEvaluation;
     }
 }

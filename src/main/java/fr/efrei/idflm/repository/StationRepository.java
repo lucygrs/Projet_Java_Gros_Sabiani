@@ -7,10 +7,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface StationRepository extends JpaRepository<Station, Integer> {
 
     List<Station> findAllByOrderByNomAsc();
+
+    Optional<Station> findByNomIgnoreCase(String nom);
 
     @Query("""
             SELECT ls.station FROM LigneStation ls

@@ -11,4 +11,6 @@ public interface LigneStationRepository extends JpaRepository<LigneStation, Inte
     List<LigneStation> findByStationIdIn(List<Integer> idsStations);
 
     Optional<LigneStation> findByLigneIdAndStationId(Integer idLigne, Integer idStation);
+
+    boolean existsByStationId(Integer idStation);
 }

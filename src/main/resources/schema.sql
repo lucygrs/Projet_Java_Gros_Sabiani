@@ -2,7 +2,6 @@ DROP TABLE IF EXISTS evaluation;
 DROP TABLE IF EXISTS incident;
 DROP TABLE IF EXISTS equipement;
 DROP TABLE IF EXISTS prestataire;
-DROP TABLE IF EXISTS station_utilisateur;
 DROP TABLE IF EXISTS utilisateur;
 DROP TABLE IF EXISTS ligne_station;
 DROP TABLE IF EXISTS station;
@@ -36,14 +35,6 @@ CREATE TABLE utilisateur (
     prenom         VARCHAR(100) NOT NULL,
     mot_de_passe   VARCHAR(100) NOT NULL,
     profil         VARCHAR(30)  NOT NULL
-);
-
-CREATE TABLE station_utilisateur (
-    id_station_utilisateur INT AUTO_INCREMENT PRIMARY KEY,
-    id_station             INT NOT NULL,
-    id_utilisateur         INT NOT NULL,
-    CONSTRAINT fk_station_utilisateur_station FOREIGN KEY (id_station) REFERENCES station (id_station),
-    CONSTRAINT fk_station_utilisateur_utilisateur FOREIGN KEY (id_utilisateur) REFERENCES utilisateur (id_utilisateur)
 );
 
 CREATE TABLE prestataire (

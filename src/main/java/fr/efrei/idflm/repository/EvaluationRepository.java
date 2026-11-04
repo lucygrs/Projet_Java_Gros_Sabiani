@@ -10,7 +10,5 @@ public interface EvaluationRepository extends JpaRepository<Evaluation, Integer>
 
     Optional<Evaluation> findByIncidentId(Integer idIncident);
 
-    boolean existsByIncidentId(Integer idIncident);
-
     List<Evaluation> findByIncidentIdIn(List<Integer> idsIncidents);
 }

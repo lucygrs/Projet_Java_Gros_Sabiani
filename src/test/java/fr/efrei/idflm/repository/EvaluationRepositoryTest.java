@@ -25,10 +25,8 @@ class EvaluationRepositoryTest {
 
     @Test
     void secondeEvaluationDuMemeIncidentEstRefuseeParLaBase() {
-        Evaluation seconde = new Evaluation();
-        seconde.setIncident(incidentRepository.findById(ID_INCIDENT_DEJA_EVALUE).orElseThrow());
-        seconde.setNote(5);
-        seconde.setDateEvaluation(LocalDateTime.now());
+        Evaluation seconde = new Evaluation(
+                incidentRepository.findById(ID_INCIDENT_DEJA_EVALUE).orElseThrow(), 5, null, LocalDateTime.now());
 
         assertThatThrownBy(() -> evaluationRepository.saveAndFlush(seconde))
                 .isInstanceOf(DataIntegrityViolationException.class);

@@ -13,6 +13,12 @@ public interface IncidentRepository extends JpaRepository<Incident, Integer> {
 
     long countByStatutNot(StatutIncident statut);
 
+    boolean existsByEquipementId(Integer idEquipement);
+
+    boolean existsByPrestataireId(Integer idPrestataire);
+
+    boolean existsByEquipementIdAndStatutNotAndIdNot(Integer idEquipement, StatutIncident statut, Integer idIncident);
+
     List<Incident> findByStatutNotOrderByDateOuvertureAsc(StatutIncident statut);
 
     List<Incident> findByEquipementIdOrderByDateOuvertureDesc(Integer idEquipement);

@@ -1,6 +1,11 @@
 package fr.efrei.idflm.modele;
 
+import fr.efrei.idflm.exception.ResolutionImpossibleException;
+import fr.efrei.idflm.exception.TransitionInterditeException;
 import jakarta.persistence.*;
+
+import java.time.Clock;
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Entity
@@ -35,67 +40,92 @@ public class Incident {
     @Column(name = "date_resolution")
     private LocalDateTime dateResolution;
 
-    public Integer getId() {
-        return id;
+    protected Incident() {
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public static Incident declarer(Equipement equipement, String titre, String description,
+                                    LocalDateTime dateOuverture) {
+        Incident incident = new Incident();
+        incident.equipement = equipement;
+        incident.titre = titre;
+        incident.description = description;
+        incident.dateOuverture = dateOuverture;
+        incident.statut = StatutIncident.NON_AFFECTE;
+        return incident;
+    }
+
+    public void modifierInformations(String titre, String description) {
+        verifierNonResolu("modifié");
+        this.titre = titre;
+        this.description = description;
+    }
+
+    public void affecter(Prestataire prestataire) {
+        verifierNonResolu("affecté");
+        this.prestataire = prestataire;
+        this.statut = StatutIncident.AFFECTE;
+    }
+
+    public void resoudre(LocalDateTime dateResolution) {
+        verifierNonResolu("résolu");
+        if (!aUnPrestataire()) {
+            throw new ResolutionImpossibleException(id, "aucun prestataire ne lui est affecté");
+        }
+        if (dateResolution.isBefore(dateOuverture)) {
+            throw new ResolutionImpossibleException(id, "la date de résolution précède son ouverture");
+        }
+        this.dateResolution = dateResolution;
+        this.statut = StatutIncident.RESOLU;
+    }
+
+    public boolean estResolu() {
+        return statut == StatutIncident.RESOLU;
+    }
+
+    public boolean aUnPrestataire() {
+        return prestataire != null;
+    }
+
+    public Duration dureeOuverture(Clock horloge) {
+        LocalDateTime fin = estResolu() ? dateResolution : LocalDateTime.now(horloge);
+        return Duration.between(dateOuverture, fin);
+    }
+
+    private void verifierNonResolu(String operationRefusee) {
+        if (estResolu()) {
+            throw new TransitionInterditeException(id, operationRefusee);
+        }
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     public Equipement getEquipement() {
         return equipement;
     }
 
-    public void setEquipement(Equipement equipement) {
-        this.equipement = equipement;
-    }
-
     public String getTitre() {
         return titre;
-    }
-
-    public void setTitre(String titre) {
-        this.titre = titre;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public LocalDateTime getDateOuverture() {
         return dateOuverture;
-    }
-
-    public void setDateOuverture(LocalDateTime dateOuverture) {
-        this.dateOuverture = dateOuverture;
     }
 
     public StatutIncident getStatut() {
         return statut;
     }
 
-    public void setStatut(StatutIncident statut) {
-        this.statut = statut;
-    }
-
     public Prestataire getPrestataire() {
         return prestataire;
     }
 
-    public void setPrestataire(Prestataire prestataire) {
-        this.prestataire = prestataire;
-    }
-
     public LocalDateTime getDateResolution() {
         return dateResolution;
-    }
-
-    public void setDateResolution(LocalDateTime dateResolution) {
-        this.dateResolution = dateResolution;
     }
 }

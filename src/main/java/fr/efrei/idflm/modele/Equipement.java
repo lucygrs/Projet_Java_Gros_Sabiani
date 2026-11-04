@@ -30,6 +30,14 @@ public class Equipement {
     @Column(name = "etat", nullable = false, length = 20)
     private EtatEquipement etat;
 
+    public void signalerPanne() {
+        this.etat = EtatEquipement.EN_PANNE;
+    }
+
+    public void remettreEnService() {
+        this.etat = EtatEquipement.EN_SERVICE;
+    }
+
     public Integer getId() {
         return id;
     }
