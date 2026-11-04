@@ -68,6 +68,12 @@ public class IncidentService {
                 .toList();
     }
 
+    public List<IncidentSuivi> listerIncidentsResolus() {
+        return incidentRepository.rechercherIncidentsResolus("", Pageable.unpaged()).stream()
+                .map(this::suivreIncident)
+                .toList();
+    }
+
     public IncidentSuivi suivreIncident(Incident incident) {
         return new IncidentSuivi(incident, politiqueUrgence.evaluer(incident), incident.dureeOuverture(horloge));
     }

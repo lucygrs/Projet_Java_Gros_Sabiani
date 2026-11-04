@@ -6,7 +6,9 @@
 - Prérequis : Java 21, Maven (wrapper `mvnw` fourni), MariaDB 10.6 ou plus (testé avec MariaDB 13)
 - Configuration : variables d'environnement `DB_URL`, `DB_USER`, `DB_PASSWORD` ; sans elles, l'application se connecte à `jdbc:mariadb://localhost:3306/idflm` avec l'utilisateur `root` sans mot de passe
 - Initialiser la base : automatique au démarrage. La base `idflm` est créée si elle n'existe pas, puis `src/main/resources/schema.sql` recrée les tables et `src/main/resources/data.sql` insère les données de démonstration (dates relatives à l'instant du démarrage). Pour conserver les données entre deux démarrages : `DB_INIT_MODE=never`
-- Lancer : `mvnw spring-boot:run`
+- Lancer : `mvnw spring-boot:run`, puis ouvrir http://localhost:8080
+- Tests : `mvnw test` (base H2 en mémoire, MariaDB n'a pas besoin de tourner)
+- API REST (F12) : documentation Swagger sur http://localhost:8080/swagger-ui/index.html, authentification HTTP Basic avec un compte de test, par exemple `curl -u lucy.gros:Agent2026! http://localhost:8080/api/incidents`
 - Application déployée : pas de déploiement pour le moment
 - Comptes de test :
   - Responsable d'exploitation : `aubin.sabiani` / `Responsable2026!`
@@ -16,9 +18,10 @@
 
 ## ARCHITECTURE
 - Dépôt : https://github.com/lucygrs/Projet_Java_Gros_Sabiani
-- Schéma : Navigateur → Spring Security → couche web (`controleur`, DTO) → couche service (`service`) → couche persistance (`repository`, Spring Data JPA) → MariaDB
+- Schéma : Navigateur ou client de l'API → Spring Security → couche web (`controleur` pour les pages, `api` pour le REST, DTO) → couche service (`service`) → couche persistance (`repository`, Spring Data JPA) → MariaDB
 - Packages (`fr.efrei.idflm`) :
-  - `config` : beans techniques (horloge `Clock`, encodeur de mots de passe)
+  - `config` : beans techniques (horloge `Clock`, encodeur de mots de passe, sécurité, documentation OpenAPI)
+  - `api` : contrôleur REST des incidents et traduction des exceptions en JSON (`GestionnaireErreursApi`)
   - `modele` : entités JPA, énumérations (`Profil`, `StatutIncident`, `EtatEquipement`, `NiveauAttention`) et règles de cycle de vie d'un incident
   - `repository` : interfaces Spring Data JPA
   - `service` : règles de gestion et cas d'usage, dont `PolitiqueUrgence` (seuils 48 h / 72 h)
@@ -32,6 +35,13 @@
   - `/incidents` (en cours), `/incidents/passes` (F9), `/incidents/{id}` (F5), `/incidents/nouveau` (F4), `/incidents/{id}/modification` (F6), `/incidents/{id}/affectation` (F7), `/incidents/{id}/resolution` (F8 et F10), `/incidents/{id}/evaluation`
   - `/equipements` (F2, filtrable par `?station=`), `/equipements/{id}/fiche` (F3)
   - `/lignes`, `/lignes/{id}/stations`, `/utilisateurs`, `/prestataires`, `/parametres`
+- Routes de l'API REST (F12, JSON) :
+  - `GET /api/incidents` : incidents actifs avec leur niveau d'attention
+  - `GET /api/incidents/resolus` : historique, du plus récent au plus ancien (responsable)
+  - `GET /api/incidents/{id}` : un incident, 404 s'il n'existe pas
+  - `POST /api/incidents` : déclaration, 201 et en-tête `Location`
+  - `PUT /api/incidents/{id}/prestataire` : affectation ou réaffectation (responsable), 409 si l'incident est résolu
+  - `PUT /api/incidents/{id}/resolution` : résolution et évaluation, 409 si l'incident est déjà résolu ou sans prestataire, 400 si la note est hors de 1 à 5
 - Modèle de données : `ligne`, `station`, `ligne_station`, `equipement`, `incident`, `prestataire`, `evaluation`, `utilisateur` (voir `schema.sql`)
 
 ## TESTS
@@ -62,9 +72,10 @@
   - un agent reçoit 403 sur le tableau de bord, l'historique, l'affectation, la modification, les formulaires de création et la gestion humaine, même en forçant la requête (RG11) ; le responsable y accède
   - un agent accède à la déclaration, au détail, à la résolution, aux équipements et aux lignes
   - un incident inexistant affiche une page 404 avec un message en français, sans trace technique
-- Tests de la couche web : `@SpringBootTest` + MockMvc sur la base H2, avec une session authentifiée construite dans le test (sans dépendance supplémentaire)
-- Vérification manuelle dans un navigateur : connexion des deux profils, tableau de bord, pop-up de résolution (étoiles, envoi en fetch, passage dans l'historique), paramètres et déconnexion
-- Non couvert : API REST (partie 4)
+  - API : la demande d'un incident inexistant renvoie 404 avec un message JSON en français ; une requête sans authentification renvoie 401 ; les incidents actifs n'incluent aucun incident résolu ; l'historique commence par la résolution la plus récente ; un agent reçoit 403 sur l'historique et l'affectation ; l'affectation passe l'incident en « pris en charge » ; la résolution passe l'incident en « résolu » ; résoudre un incident déjà résolu renvoie 409 ; une note de 6 renvoie 400 ; la déclaration renvoie 201 avec l'adresse du nouvel incident
+- Tests de la couche web : `@SpringBootTest` + MockMvc sur la base H2, avec une session authentifiée construite dans le test (sans dépendance supplémentaire) ; les tests de l'API s'authentifient en HTTP Basic et sont `@Transactional` pour annuler leurs modifications
+- Vérification manuelle dans un navigateur : connexion des deux profils, tableau de bord, pop-up de résolution (étoiles, envoi en fetch, passage dans l'historique), listes avec recherche, paramètres et déconnexion ; API et Swagger interrogés sur MariaDB
+- Non couvert : le rendu visuel des écrans (vérifié à la main), les messages d'erreur de validation affichés dans les pop-ups
 
 ## CHOIX TECHNIQUES
 - Droits par profil (source : tableau du plan relationnel) :
@@ -90,6 +101,9 @@
   - `MotDePasseObligatoireException` et les erreurs de Bean Validation : données invalides, traduites en 400
   - les services ne connaissent pas HTTP : la traduction est centralisée dans un `@ControllerAdvice` (pages) et un `@RestControllerAdvice` (API) plutôt que dans des `ResponseStatusException` dispersées, car le projet compte de nombreuses exceptions métier (fiche Gestion des exceptions §10)
   - aucun service ne retourne `null` : les recherches par identifiant utilisent `orElseThrow`
+  - côté API, `GestionnaireErreursApi` renvoie un corps JSON `ErreurApi` (statut, message, détails de validation) ; une erreur inattendue est journalisée avec sa trace et seul un message générique est renvoyé (500)
+- ResponseEntity : utilisé seulement là où il apporte quelque chose, dans `GestionnaireErreursApi` pour choisir le code HTTP de chaque erreur et dans `POST /api/incidents` pour renvoyer 201 avec l'en-tête `Location` ; les autres méthodes de l'API renvoient directement l'objet (200)
+- API : deux chaînes Spring Security. `/api/**` est authentifié en HTTP Basic, sans session (donc sans risque CSRF), avec les mêmes droits que les pages (historique et affectation réservés au responsable) ; le reste de l'application garde la connexion par formulaire. Les entités ne sont jamais exposées : l'API renvoie un DTO `IncidentReponse`. Documentation : springdoc-openapi 3.1.1 (Swagger UI), limitée aux routes `/api/**`
 - SOLID :
   - S appliqué : `PolitiqueUrgence` est la seule classe qui connaît les seuils de 48 h et 72 h ; les règles de cycle de vie vivent dans `Incident` (`affecter`, `resoudre`, `modifierInformations`) au lieu d'être dispersées dans les services ; les contrôleurs ne contiendront aucune règle. Changer un seuil ou une transition ne modifie qu'une classe
   - D appliqué : chaque service reçoit par son constructeur ses repositories (interfaces) et l'horloge `Clock`. Conséquence concrète : les tests unitaires remplacent la base par des simulations Mockito et l'heure par `Clock.fixed`, sans démarrer Spring
@@ -124,17 +138,19 @@
 - Besoin : retrouver vite un incident, un équipement ou un compte quand les listes s'allongent
 - Périmètre : champ « Rechercher » et pagination de 10 lignes sur toutes les listes ; filtres station et statut sur le tableau de bord
 - Choix : requêtes JPQL paginées (`Page`, `Pageable`) dans les repositories, record `Pagination` qui construit les liens précédent et suivant en conservant la recherche et les filtres
-- Ce qui fonctionne : recherche, filtres et pagination sur le tableau de bord, les incidents, les équipements, les lignes, les stations, les comptes et les prestataires
-- Reste à faire : …
+- Ce qui fonctionne : recherche, filtres et pagination sur le tableau de bord, les incidents, les équipements, les lignes, les stations, les comptes et les prestataires ; recherche dans les listes déroulantes des équipements et des stations
+- Difficultés : conserver la recherche et les filtres dans les liens de pagination, résolu en construisant les liens à partir de la requête courante
+- Reste à faire : tri par colonne, filtres combinables sur les autres listes
 ### Fonctionnalité transverse 2 : pop-ups asynchrones (fetch)
 - Besoin : déclarer, modifier, affecter, résoudre ou consulter sans quitter la page
 - Choix : `static/js/popups.js` charge un fragment Thymeleaf avec `fetch` et l'affiche dans une pop-up ; les formulaires sont envoyés en `fetch` ; une erreur de validation renvoie la pop-up avec le code 400 et les messages, une erreur métier renvoie un message avec le code 404 ou 409, un succès recharge la liste
 - Sécurité : le jeton CSRF accompagne chaque envoi, les verbes PUT et DELETE passent par le champ `_method`
 - Ce qui fonctionne : toutes les pop-ups (détail F5, fiche équipement F3, formulaires, résolution avec étoiles, évaluation, paramètres)
-- Reste à faire : …
+- Difficultés : les redirections après un PUT ou un DELETE envoyé en fetch, résolues en envoyant toujours un POST avec le champ `_method` (une redirection 302 après un POST est suivie en GET)
+- Reste à faire : messages de validation affichés sous chaque champ plutôt qu'en tête de pop-up
 
 ## BILAN
-- Contribution de chacun : …
-- Plus grande difficulté et comment elle a été surmontée : …
-- Fonctionnalités non réalisées et pourquoi : …
-- Trois points à retenir du cours et du projet : …
+- Contribution de chacun : répartition prévue par le groupe : socle et couche web (Aubin SABIANI), règles métier et API REST (Lucy GROS) ; à compléter par chaque membre
+- Plus grande difficulté et comment elle a été surmontée : à compléter par le groupe
+- Fonctionnalités non réalisées et pourquoi : déploiement sur un serveur (§7.9), écarté par le groupe pour le moment
+- Trois points à retenir du cours et du projet : à compléter par le groupe
