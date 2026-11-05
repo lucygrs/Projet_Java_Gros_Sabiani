@@ -9,7 +9,7 @@
 - Lancer : `mvnw spring-boot:run`, puis ouvrir http://localhost:8080
 - Tests : `mvnw test` (base H2 en mémoire, MariaDB n'a pas besoin de tourner)
 - API REST (F12) : documentation Swagger sur http://localhost:8080/swagger-ui/index.html, authentification HTTP Basic avec un compte de test, par exemple `curl -u lucy.gros:Agent2026! http://localhost:8080/api/incidents`
-- Application déployée : pas de déploiement pour le moment
+- Application déployée : idflm.aubinserv.fr
 - Comptes de test :
   - Responsable d'exploitation : `aubin.sabiani` / `Responsable2026!`
   - Agent de signalement : `lucy.gros` / `Agent2026!`
@@ -154,3 +154,14 @@
 - Plus grande difficulté et comment elle a été surmontée : à compléter par le groupe
 - Fonctionnalités non réalisées et pourquoi : déploiement sur un serveur (§7.9), écarté par le groupe pour le moment
 - Trois points à retenir du cours et du projet : à compléter par le groupe
+
+# DEPLOYEMENT
+https://idflm.aubinserv.fr
+
+## Reponsable d'exploitation
+LOGIN : demo.exploitation
+MDP : demo.exploitation
+
+## Agent de signalement
+LOGIN : demo.signalement
+MDP : demo.signalement
